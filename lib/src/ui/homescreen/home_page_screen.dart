@@ -8,12 +8,18 @@ class HomePage extends StatelessWidget {
   final List<String> sponsorLogos = [
     "assets/sponsors/ipl.jpg",
     "assets/sponsors/tata.jpeg",
+    "assets/sponsors/ipl.jpg",
+    "assets/sponsors/tata.jpeg",
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text('Cricket Draft Home')),
+      backgroundColor: Colors.blueAccent,
+      appBar: AppBar(
+          backgroundColor: Colors.blueAccent,
+          centerTitle: true,
+          title: Text('Cricket Draft Home')),
       body: Column(
         children: [
           Expanded(
@@ -87,6 +93,9 @@ class HomeButton extends StatelessWidget {
               context, MaterialPageRoute(builder: (context) => route));
         },
         style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.deepPurpleAccent,
+          foregroundColor: Colors.white,
+          shadowColor: Colors.black,
           padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
           textStyle: TextStyle(fontSize: 18),
         ),
