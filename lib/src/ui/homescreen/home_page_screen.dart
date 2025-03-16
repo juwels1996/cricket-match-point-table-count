@@ -17,9 +17,14 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.blueAccent,
       appBar: AppBar(
-          backgroundColor: Colors.blueAccent,
-          centerTitle: true,
-          title: Text('Cricket Draft Home')),
+        backgroundColor: Colors.blueAccent,
+        centerTitle: true,
+        title: Text('What Are You Looking For?',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+            )),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -28,7 +33,7 @@ class HomePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   HomeButton(title: "Teams", route: TeamsScreen()),
-                  HomeButton(title: "Players", route: PlayersScreen()),
+                  // HomeButton(title: "Players", route: PlayersScreen()),
                   HomeButton(title: "Matches", route: MatchesScreen()),
                   HomeButton(title: "Points Table", route: PointsTableScreen()),
                 ],
