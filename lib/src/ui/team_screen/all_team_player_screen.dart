@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:cricket_scorecard/src/ui/team_screen/team_details_screen/team_details_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../../utils/responsives_classes.dart';
 
 class TeamsScreen extends StatefulWidget {
   @override
@@ -14,7 +13,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
 
   Future<void> fetchTeams() async {
     final response =
-        await http.get(Uri.parse("http://192.168.0.105:8000/api/teams/"));
+        await http.get(Uri.parse("http://192.168.0.107:8000/api/teams/"));
     if (response.statusCode == 200) {
       setState(() {
         teams = jsonDecode(response.body);
@@ -31,17 +30,28 @@ class _TeamsScreenState extends State<TeamsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Teams")),
+      backgroundColor: Colors.black12, // Background similar to IPL theme
+      appBar: AppBar(
+        leading: Icon(
+          Icons.arrow_back,
+          color: Colors.white,
+        ),
+        title: Text("TEAMS",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.black,
+        centerTitle: true,
+      ),
       body: teams.isEmpty
           ? Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(12.0),
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: Responsive.isLargeScreen(context) ? 4 : 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 3 / 2,
+                  crossAxisCount:
+                      MediaQuery.of(context).size.width > 600 ? 3 : 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 1, // Square shape
                 ),
                 itemCount: teams.length,
                 itemBuilder: (context, index) {
@@ -60,6 +70,18 @@ class TeamCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color _parseColor(String colorString) {
+      try {
+        if (colorString.startsWith("#")) {
+          return Color(
+              int.parse(colorString.replaceFirst("#", "#0000FF"), radix: 16));
+        }
+      } catch (e) {
+        print("Error parsing color: $e");
+      }
+      return Colors.grey; // Default fallback color if error occurs
+    }
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -70,18 +92,48 @@ class TeamCard extends StatelessWidget {
         );
       },
       child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        elevation: 5,
+        // Card background
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.sports_cricket,
-                size: 40, color: Colors.blue), // Placeholder for team logo
-            SizedBox(height: 10),
-            Text(
-              textAlign: TextAlign.center,
-              team['name'],
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            // 🔹 Top half with curved banner and team logo
+            Container(
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.yellow,
+
+// Team color
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(40)),
+              ),
+              child: Center(
+                child: Image.network(
+                  team['logo'],
+                  height: 50,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+
+            // 🔹 Bottom Half with Team Name
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(15)),
+                ),
+                child: Center(
+                  child: Text(
+                    team['name'],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

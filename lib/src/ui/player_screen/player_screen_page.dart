@@ -12,7 +12,7 @@ class _PlayersScreenState extends State<PlayersScreen> {
 
   Future<void> fetchPlayers() async {
     final response =
-        await http.get(Uri.parse("http://192.168.0.105:8000/api/players/"));
+        await http.get(Uri.parse("http://192.168.0.107:8000/api/players/"));
     if (response.statusCode == 200) {
       setState(() {
         players = jsonDecode(response.body);
