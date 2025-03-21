@@ -22,7 +22,7 @@ class _OverallStatsScreenState extends State<OverallStatsScreen> {
 
   Future<void> fetchOverallStats() async {
     final response = await http
-        .get(Uri.parse("http://192.168.0.107:8000/api/overall_stats/"));
+        .get(Uri.parse("http://192.168.0.104:8000/api/overall_stats/"));
 
     if (response.statusCode == 200) {
       setState(() {
@@ -105,7 +105,10 @@ class _OverallStatsScreenState extends State<OverallStatsScreen> {
                             player["team_name"];
                     return DataRow(
                       cells: [
-                        DataCell(Text(index.toString())), // Position
+                        DataCell(Text(
+                          index.toString(),
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )), // Position
                         DataCell(Row(
                           children: [
                             Image.network(player["image_url"],

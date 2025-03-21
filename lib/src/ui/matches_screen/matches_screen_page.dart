@@ -12,7 +12,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   Future<void> fetchMatches() async {
     final response =
-        await http.get(Uri.parse("http://192.168.0.107:8000/api/matches/"));
+        await http.get(Uri.parse("http://192.168.0.104:8000/api/matches/"));
     if (response.statusCode == 200) {
       setState(() {
         matches = jsonDecode(response.body);
@@ -42,7 +42,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                     subtitle: Column(
                       children: [
                         Text("Winner Team: ${matches[index]['winner_name']}"),
-                        Text("result: ${matches[index]['result']}"),
+                        Text("result: win by ${matches[index]['result']}"),
                         Text("Date: ${matches[index]['date']}"),
                       ],
                     ),

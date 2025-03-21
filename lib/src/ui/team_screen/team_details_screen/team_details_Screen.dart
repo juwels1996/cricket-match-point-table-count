@@ -17,7 +17,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
 
   Future<void> fetchTeamDetails() async {
     final response = await http.get(
-      Uri.parse("http://192.168.0.107:8000/api/teams/${widget.teamId}/"),
+      Uri.parse("http://192.168.0.104:8000/api/teams/${widget.teamId}/"),
     );
 
     if (response.statusCode == 200) {
@@ -42,6 +42,17 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
       );
     }
 
+    // Separate players by category
+    var localPlayers = teamData!['players']
+        .where((player) => player['category'] == 'Local')
+        .toList();
+    var semiLocalPlayers = teamData!['players']
+        .where((player) => player['category'] == 'Semi-Local')
+        .toList();
+    var overseasPlayers = teamData!['players']
+        .where((player) => player['category'] == 'Overseas')
+        .toList();
+
     return Scaffold(
       appBar: AppBar(title: Text(teamData!['name'])),
       body: SingleChildScrollView(
@@ -49,7 +60,6 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Team Logo
             if (teamData!['logo'] != null && teamData!['logo'].isNotEmpty)
               Center(
                 child: Image.network(
@@ -59,10 +69,9 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
               ),
             SizedBox(height: 20),
 
-            // Players Grid
-            Text("Players",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            _buildGrid(teamData!['players'], "No players available"),
+            _buildCategorySection("Local Players", localPlayers),
+            _buildCategorySection("Semi-Local Players", semiLocalPlayers),
+            _buildCategorySection("Overseas Players", overseasPlayers),
 
             SizedBox(height: 20),
 
@@ -83,7 +92,22 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
     );
   }
 
-  /// ✅ **Build Responsive Grid for Players, Coaches & Owners**
+  Widget _buildCategorySection(String categoryName, List<dynamic> players) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(categoryName,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        if (players.isEmpty)
+          Center(
+              child: Text("No $categoryName available",
+                  style: TextStyle(color: Colors.grey))),
+        _buildGrid(players, "No $categoryName available"),
+      ],
+    );
+  }
+
+  /// Build responsive grid for players, coaches, and owners
   Widget _buildGrid(List<dynamic>? list, String emptyMessage) {
     if (list == null || list.isEmpty) {
       return Center(
@@ -108,7 +132,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
     );
   }
 
-  /// ✅ **Build Individual Cards**
+  /// Build individual cards
   Widget _buildCard(Map<String, dynamic> item) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

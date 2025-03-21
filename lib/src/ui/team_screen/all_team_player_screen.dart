@@ -13,7 +13,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
 
   Future<void> fetchTeams() async {
     final response =
-        await http.get(Uri.parse("http://192.168.0.107:8000/api/teams/"));
+        await http.get(Uri.parse("http://192.168.0.104:8000/api/teams/"));
     if (response.statusCode == 200) {
       setState(() {
         teams = jsonDecode(response.body);
@@ -32,9 +32,12 @@ class _TeamsScreenState extends State<TeamsScreen> {
     return Scaffold(
       backgroundColor: Colors.black12, // Background similar to IPL theme
       appBar: AppBar(
-        leading: Icon(
-          Icons.arrow_back,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
           color: Colors.white,
+          icon: Icon(Icons.arrow_back),
         ),
         title: Text("TEAMS",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -70,17 +73,18 @@ class TeamCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color _parseColor(String colorString) {
-      try {
-        if (colorString.startsWith("#")) {
-          return Color(
-              int.parse(colorString.replaceFirst("#", "#0000FF"), radix: 16));
-        }
-      } catch (e) {
-        print("Error parsing color: $e");
-      }
-      return Colors.grey; // Default fallback color if error occurs
-    }
+    final Map<String, Color> teamColors = {
+      "Chennai Super Kings": Color(0xFFFFCC00), // Yellow
+      "Mumbai Indians": Color(0xFF045093), // Blue
+      "Royal Challengers Bengaluru": Color(0xFFDA1818), // Red
+      "Delhi Capitals": Color(0xFF17449B), // Dark Blue
+      "Kolkata Knight Riders": Color(0xFF3F2051), // Purple
+      "Rajasthan Royals": Color(0xFFEA1A85), // Pink
+      "Sunrisers Hyderabad": Color(0xFFFF822A), // Orange
+      "Punjab Kings": Color(0xFFDA1818), // Red
+      "Gujarat Titans": Color(0xFF19326A), // Navy Blue
+      "Lucknow Super Giants": Color(0xFF004C99), // Royal Blue
+    };
 
     return GestureDetector(
       onTap: () {
@@ -94,18 +98,17 @@ class TeamCard extends StatelessWidget {
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         elevation: 5,
-        // Card background
+        color: Colors.black, // Background color
         child: Column(
           children: [
-            // 🔹 Top half with curved banner and team logo
+            // 🔹 Top curved banner for team logo
             Container(
               height: 80,
               decoration: BoxDecoration(
-                color: Colors.yellow,
-
-// Team color
+                color: teamColors[team['name']] ??
+                    Colors.grey, // ✅ Manual color assignment
                 borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(40)),
+                    BorderRadius.vertical(bottom: Radius.circular(25)),
               ),
               child: Center(
                 child: Image.network(
@@ -116,12 +119,12 @@ class TeamCard extends StatelessWidget {
               ),
             ),
 
-            // 🔹 Bottom Half with Team Name
+            // 🔹 Bottom Team Name
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(15)),
+                  color: Colors.grey[900],
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
                 ),
                 child: Center(
                   child: Text(
@@ -130,6 +133,7 @@ class TeamCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ),

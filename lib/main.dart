@@ -1,8 +1,15 @@
 import 'package:cricket_scorecard/src/ui/homescreen/home_page_screen.dart';
 import 'package:cricket_scorecard/src/ui/point_table/point_table_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.blueAccent,
+    ),
+  );
   runApp(const MyApp());
 }
 
