@@ -2,8 +2,8 @@ import 'package:cricket_scorecard/src/ui/matches_screen/matches_screen_page.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import '../home_drawer/home_drawer_screen.dart';
 import '../over-stat/overall_stats_screen.dart';
 import '../player_screen/player_screen_page.dart';
 import '../point_table/point_table_screen.dart';
@@ -23,6 +23,9 @@ import 'dart:convert';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
+import '../widgets/highlight_card.dart';
+import 'componenets/video_list_screen.dart';
+
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
@@ -31,6 +34,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List videos = [];
   late YoutubePlayerController _controller;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -76,6 +80,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
+        drawer: BuildDrawer(context: context),
         backgroundColor: Colors.white,
         body: RefreshIndicator(
           onRefresh: fetchVideos, // Trigger API call when pulled down
@@ -96,14 +102,88 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _openDrawer() {
+    _scaffoldKey.currentState?.openDrawer();
+  }
+
+  Widget _buildMagicMomentsSection() {
+    return Container(
+      color: Colors.black,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Magic Moments",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VideoListScreen(),
+                      ),
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    backgroundColor: Colors.white.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  child: Text("View All"),
+                ),
+              ],
+            ),
+            Container(
+              height: 220,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: videos.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () => _initializePlayer(videos[index]['video_link']),
+                    child: HighlightCard(
+                      title: videos[index]['title'],
+                      imageUrl: videos[index]['thumbnail_url'],
+                      date: videos[index]['created_at'],
+                      views: videos[index]['video_link'],
+                      duration: "05:14 mins",
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   // Header Section - IPL Logo, Search, Poll, Choice
   Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
       color: Colors.blue.shade900,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          IconButton(
+            onPressed: _openDrawer,
+            icon: Icon(Icons.menu),
+            color: Colors.white,
+          ),
           Image.asset("assets/sponsors/ipl.jpg", height: 40),
           Row(
             children: [
@@ -123,7 +203,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildHeroBanner() {
     String youtubeUrl = videos.isNotEmpty
         ? videos[0]['video_link']
-        : "https://www.youtube.com/watch?v=TOLsaVpilBk"; // Grab the first video URL
+        : ""; // Grab the first video URL
 
     return Stack(
       alignment: Alignment.center,
@@ -323,143 +403,6 @@ Widget _quickLinkButton(String title, IconData icon, Function onTap) {
           ],
         ),
       ),
-    ),
-  );
-}
-
-/// ✅ **Magic Moments Section (Carousel of Highlights)**
-Widget _buildMagicMomentsSection() {
-  return Container(
-    color: Colors.black,
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// ✅ **Header Row with "See More" Button**
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Magic Moments",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  backgroundColor: Colors.white.withOpacity(0.1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                child: Text("See More"),
-              ),
-            ],
-          ),
-
-          /// ✅ **Horizontal Scrollable List**
-          Container(
-            height: 220,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _highlightCard(
-                  "Abhishek Sharma's Most Sixes",
-                  "assets/sponsors/magic.png",
-                  "01 Jun, 2024",
-                  "",
-                  "05:14 mins",
-                ),
-                _highlightCard(
-                  "Dhoni's Last Match Winning Six",
-                  "assets/sponsors/magic.png",
-                  "30 May, 2024",
-                  "",
-                  "04:45 mins",
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-/// ✅ **Updated Card Style**
-Widget _highlightCard(
-    String title, String imageUrl, String date, String views, String duration) {
-  return Container(
-    width: 180,
-    margin: EdgeInsets.only(right: 12),
-    decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        /// ✅ **Image with Rounded Corners**
-        ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10),
-            topRight: Radius.circular(10),
-          ),
-          child: Image.asset(
-            imageUrl,
-            height: 110,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.all(8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// ✅ **Title**
-              Text(
-                title,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 5),
-
-              /// ✅ **Date, Views & Duration Row**
-              Row(
-                children: [
-                  Text(date,
-                      style: TextStyle(color: Colors.white54, fontSize: 12)),
-                  Spacer(),
-                  Icon(Icons.visibility, color: Colors.white54, size: 12),
-                  SizedBox(width: 5),
-                  Text(views,
-                      style: TextStyle(color: Colors.white54, fontSize: 12)),
-                  SizedBox(width: 5),
-                  Text(duration,
-                      style: TextStyle(color: Colors.white54, fontSize: 12)),
-                ],
-              ),
-              SizedBox(height: 5),
-
-              /// ✅ **Share Button**
-              Align(
-                alignment: Alignment.centerRight,
-                child: Icon(Icons.share, color: Colors.white54, size: 18),
-              ),
-            ],
-          ),
-        ),
-      ],
     ),
   );
 }
