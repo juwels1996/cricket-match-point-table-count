@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../homescreen/componenets/video_list_screen.dart';
 import '../matches_screen/matches_screen_page.dart';
+import '../news/news_screen.dart';
 import '../over-stat/overall_stats_screen.dart';
 import '../point_table/point_table_screen.dart';
 import '../team_screen/all_team_player_screen.dart';
@@ -157,12 +158,18 @@ class BuildDrawer extends StatelessWidget {
             // ],
           ),
           ExpansionTile(
-            title: Text(
-              'News',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+            title: GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => NewsScreen()));
+              },
+              child: Text(
+                'News',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             // children: [

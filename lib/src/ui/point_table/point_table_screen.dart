@@ -12,7 +12,7 @@ class _PointsTableScreenState extends State<PointsTableScreen> {
 
   Future<void> fetchPointsTable() async {
     final response = await http
-        .get(Uri.parse("http://192.168.0.104:8000/api/points_table/"));
+        .get(Uri.parse("http://64.227.150.216:8454/api/points_table/"));
     if (response.statusCode == 200) {
       setState(() {
         teams = jsonDecode(response.body);

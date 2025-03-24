@@ -22,7 +22,7 @@ class _OverallStatsScreenState extends State<OverallStatsScreen> {
 
   Future<void> fetchOverallStats() async {
     final response = await http
-        .get(Uri.parse("http://192.168.0.104:8000/api/overall_stats/"));
+        .get(Uri.parse("http://64.227.150.216:8454/api/overall_stats/"));
 
     if (response.statusCode == 200) {
       setState(() {
