@@ -13,7 +13,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
   // Fetch matches data from the backend
   Future<void> fetchMatches() async {
     final response =
-        await http.get(Uri.parse("http://192.168.0.66:8000/api/matches/"));
+        await http.get(Uri.parse("http://64.227.150.216:8454/api/matches/"));
     if (response.statusCode == 200) {
       print("Matches response--------: ${response.body}");
       setState(() {

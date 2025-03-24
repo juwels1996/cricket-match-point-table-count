@@ -22,7 +22,7 @@ class _AdviserScreenState extends State<AdviserScreen> {
   // Fetch advisers data from the API
   Future<void> fetchAdvisers() async {
     final response =
-        await http.get(Uri.parse("http://192.168.0.104:8000/api/advisers/"));
+        await http.get(Uri.parse("http://64.227.150.216:8454/api/advisers/"));
     if (response.statusCode == 200) {
       setState(() {
         advisers = jsonDecode(response.body);

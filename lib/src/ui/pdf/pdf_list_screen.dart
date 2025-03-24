@@ -23,7 +23,7 @@ class _PDFListScreenState extends State<PDFListScreen> {
   // Fetch PDF data from the API
   Future<void> fetchPDFs() async {
     final response =
-        await http.get(Uri.parse("http://192.168.0.66:8000/api/pdfs/"));
+        await http.get(Uri.parse("http://64.227.150.216:8454/api/pdfs/"));
 
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
