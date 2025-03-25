@@ -23,10 +23,12 @@ class _HomePageState extends State<HomePage> {
   late YoutubePlayerController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    // fetchVideos(); // Fetch the YouTube videos when the page loads
+    fetchVideos(); // Fetch the YouTube videos when the page loads
   }
 
   // Fetch YouTube video data from the backend
@@ -42,7 +44,12 @@ class _HomePageState extends State<HomePage> {
       if (videos.isNotEmpty) {
         _initializePlayer(videos[0]['video_link']);
       }
+    } else {
+      print("video list check $videos");
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   // Initialize the YouTube Player with the first video URL
@@ -72,18 +79,23 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         body: RefreshIndicator(
           onRefresh: fetchVideos, // Trigger API call when pulled down
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                _buildHeroBanner(), // Keep the Hero Banner as is// Use carousel for video thumbnails
-                _buildQuickLinks(context),
-                _buildMagicMomentsSection(),
-                _buildSponsorBanner(),
-              ],
-            ),
-          ),
+          child: isLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildHeader(),
+                      _buildHeroBanner(),
+                      // Keep the Hero Banner as is// Use carousel for video thumbnails
+                      _buildQuickLinks(context),
+                      _buildMagicMomentsSection(),
+                      _buildSponsorBanner(),
+                    ],
+                  ),
+                ),
         ),
       ),
     );
@@ -285,7 +297,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // YouTube Video Carousel
+// YouTube Video Carousel
 }
 
 /// ✅ **"What Are You Looking For?" Section**
@@ -323,7 +335,8 @@ Widget _buildQuickLinks(BuildContext context) {
         GridView.count(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
-          crossAxisCount: 2, // Two columns
+          crossAxisCount: 2,
+          // Two columns
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
           childAspectRatio: 3.5,
@@ -362,10 +375,12 @@ Widget _quickLinkButton(String title, IconData icon, Function onTap) {
     child: InkWell(
       onTap: () => onTap(),
       borderRadius: BorderRadius.circular(10),
-      splashColor: Colors.blue.withOpacity(0.3), // Ripple Effect
+      splashColor: Colors.blue.withOpacity(0.3),
+      // Ripple Effect
       highlightColor: Colors.blue.withOpacity(0.1),
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 200), // Smooth hover effect
+        duration: Duration(milliseconds: 200),
+        // Smooth hover effect
         curve: Curves.easeInOut,
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
         decoration: BoxDecoration(
