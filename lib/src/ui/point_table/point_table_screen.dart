@@ -51,126 +51,133 @@ class _PointsTableScreenState extends State<PointsTableScreen> {
           )),
       body: teams.isEmpty
           ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: teams.length,
-              itemBuilder: (context, index) {
-                String teamName = teams[index]['name'] ?? 'No team name';
-                // Replace full team name with the custom name from the map
-                String customTeamName = teamNameMapping[teamName] ??
-                    teamName; // Use the original name if no mapping exists
+          : Card(
+              color: Colors.grey[200],
+              elevation: 5,
+              child: Container(
+                height: 300, // Adjust the height as needed
+                child: ListView.builder(
+                  itemCount: teams.length,
+                  itemBuilder: (context, index) {
+                    String teamName = teams[index]['name'] ?? 'No team name';
+                    // Replace full team name with the custom name from the map
+                    String customTeamName =
+                        teamNameMapping[teamName] ?? teamName;
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Column header row
-                    if (index == 0)
-                      Row(
-                        children: [
-                          Expanded(
-                              child: Text(
-                            'Team',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          )),
-                          Expanded(
-                              child: Text(
-                            'Played',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          )),
-                          Expanded(
-                              child: Text(
-                            'Wins',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          )),
-                          Expanded(
-                              child: Text(
-                            'Losses',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          )),
-                          Expanded(
-                              child: Text(
-                            'Ties',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          )),
-                          Expanded(
-                              child: Text(
-                            'NRR',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          )),
-                          Expanded(
-                              child: Text(
-                            'Points',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          )),
-                        ],
-                      ),
-                    // Row for each team data
-                    Padding(
-                      padding: EdgeInsets.only(left: 20.0, top: 18),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              customTeamName,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12,
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Column header row
+                        if (index == 0)
+                          Row(
+                            children: [
+                              Expanded(
+                                  child: Text(
+                                'Team',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              )),
+                              Expanded(
+                                  child: Text(
+                                'Played',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              )),
+                              Expanded(
+                                  child: Text(
+                                'Wins',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              )),
+                              Expanded(
+                                  child: Text(
+                                'Losses',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              )),
+                              Expanded(
+                                  child: Text(
+                                'Ties',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              )),
+                              Expanded(
+                                  child: Text(
+                                'NRR',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              )),
+                              Expanded(
+                                  child: Text(
+                                'Points',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              )),
+                            ],
+                          ),
+                        // Row for each team data
+                        Padding(
+                          padding: EdgeInsets.only(left: 20.0, top: 18),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  customTeamName,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ),
-                            ),
+                              Expanded(
+                                child: Text(
+                                    teams[index]['matches_played'].toString()),
+                              ),
+                              Expanded(
+                                child: Text(teams[index]['wins'].toString()),
+                              ),
+                              Expanded(
+                                child: Text(teams[index]['losses'].toString()),
+                              ),
+                              Expanded(
+                                child: Text(teams[index]['ties'].toString()),
+                              ),
+                              Expanded(
+                                child: Text(teams[index]['net_run_rate']
+                                    .toStringAsFixed(2)),
+                              ),
+                              Expanded(
+                                child: Text(teams[index]['points'].toString()),
+                              ),
+                            ],
                           ),
-                          Expanded(
-                            child:
-                                Text(teams[index]['matches_played'].toString()),
-                          ),
-                          Expanded(
-                            child: Text(teams[index]['wins'].toString()),
-                          ),
-                          Expanded(
-                            child: Text(teams[index]['losses'].toString()),
-                          ),
-                          Expanded(
-                            child: Text(teams[index]['ties'].toString()),
-                          ),
-                          Expanded(
-                            child: Text(teams[index]['net_run_rate']
-                                .toStringAsFixed(2)),
-                          ),
-                          Expanded(
-                            child: Text(teams[index]['points'].toString()),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              },
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
             ),
     );
   }

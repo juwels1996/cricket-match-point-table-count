@@ -54,27 +54,33 @@ class _VideoListScreenState extends State<VideoListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black12,
       appBar: AppBar(title: Text("Magic Moments - All Videos")),
       body: ListView.builder(
         scrollDirection: Axis.vertical,
         itemCount: videos.length,
         itemBuilder: (context, index) {
           return GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    VideoPlayerScreen(videoLink: videos[index]['video_link']),
-              ),
-            ),
-            child: HighlightCard(
-              title: videos[index]['title'],
-              imageUrl: videos[index]['thumbnail_url'],
-              date: videos[index]['created_at'],
-              views: "",
-              duration: "05:14 mins",
-            ),
-          );
+              onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => VideoPlayerScreen(
+                          videoLink: videos[index]['video_link']),
+                    ),
+                  ),
+              child: Column(
+                children: [
+                  HighlightCard(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    title: videos[index]['title'],
+                    imageUrl: videos[index]['thumbnail_url'],
+                    date: videos[index]['created_at'],
+                    views: "",
+                    duration: "",
+                  ),
+                  Divider(),
+                ],
+              ));
         },
       ),
     );

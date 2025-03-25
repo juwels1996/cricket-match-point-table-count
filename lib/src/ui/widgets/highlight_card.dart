@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class HighlightCard extends StatefulWidget {
   final String title;
   final String imageUrl;
   final String date;
+  double? height;
+  double? width;
   final String views;
   final String duration;
 
-  const HighlightCard({
+  HighlightCard({
     Key? key,
     required this.title,
     required this.imageUrl,
     required this.date,
+    this.height,
+    this.width,
     required this.views,
     required this.duration,
   }) : super(key: key);
@@ -24,7 +29,7 @@ class _HighlightCardState extends State<HighlightCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 180,
+      width: widget.width ?? 150,
       margin: EdgeInsets.only(right: 12),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
@@ -33,6 +38,8 @@ class _HighlightCardState extends State<HighlightCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 10),
+
           /// ✅ **Image with Rounded Corners**
           ClipRRect(
             borderRadius: BorderRadius.only(
@@ -61,17 +68,15 @@ class _HighlightCardState extends State<HighlightCard> {
                   ),
                 ),
                 SizedBox(height: 5),
+                Text(
+                  DateFormat('dd MMM yyyy').format(DateTime.parse(widget.date)),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                  ),
+                )
 
                 /// ✅ **Date, Views & Duration Row**
-                Row(
-                  children: [
-                    Spacer(),
-                    Icon(Icons.visibility, color: Colors.white54, size: 12),
-                    SizedBox(width: 5),
-                    Text(widget.duration,
-                        style: TextStyle(color: Colors.white54, fontSize: 12)),
-                  ],
-                ),
               ],
             ),
           ),

@@ -161,10 +161,10 @@ class BuildDrawer extends StatelessWidget {
             title: GestureDetector(
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => NewsScreen()));
+                    MaterialPageRoute(builder: (context) => PDFListScreen()));
               },
               child: Text(
-                'News',
+                'Code Of conduct',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 14,

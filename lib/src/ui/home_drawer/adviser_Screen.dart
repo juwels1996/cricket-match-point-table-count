@@ -58,7 +58,7 @@ class _AdviserScreenState extends State<AdviserScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(50),
                   child: Image.network(
                     advisers[index]['image_url']!,
                     height: 100,

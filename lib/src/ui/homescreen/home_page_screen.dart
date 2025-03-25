@@ -1,3 +1,6 @@
+import 'package:cricket_scorecard/src/ui/homescreen/componenets/about_us_widget.dart';
+import 'package:cricket_scorecard/src/ui/homescreen/componenets/contact_us_widget.dart';
+import 'package:cricket_scorecard/src/ui/homescreen/componenets/guideline_widget.dart';
 import 'package:cricket_scorecard/src/ui/matches_screen/matches_screen_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +14,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../widgets/highlight_card.dart';
+import 'componenets/build_sponsor_widget.dart';
+import 'componenets/team_list_widget.dart';
 import 'componenets/video_list_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -92,7 +97,13 @@ class _HomePageState extends State<HomePage> {
                       // Keep the Hero Banner as is// Use carousel for video thumbnails
                       _buildQuickLinks(context),
                       _buildMagicMomentsSection(),
-                      _buildSponsorBanner(),
+                      SponsorScreen(),
+                      TeamListScreen(),
+                      AboutUsInformation(),
+                      GuidelineWidget(),
+                      ContactUsWidget(),
+
+                      // _buildSponsorBanner(),
                     ],
                   ),
                 ),
@@ -170,6 +181,55 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildteam() {
+    final List<String> teams = [
+      "Chennai Super Kings",
+      "Delhi Capitals",
+      "Gujarat Titans",
+      "Kolkata Knight Riders",
+      "Lucknow Super Giants",
+      "Mumbai Indians",
+      "Punjab Kings",
+      "Rajasthan Royals",
+      "Royal Challengers Bengaluru",
+      "Sunrisers Hyderabad",
+    ];
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text(
+          'TEAM',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.black,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: teams.length,
+          itemBuilder: (context, index) {
+            return Card(
+              color: Colors.black,
+              elevation: 5,
+              margin: EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                title: Text(
+                  teams[index],
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   // Header Section - IPL Logo, Search, Poll, Choice
   Widget _buildHeader() {
     return Container(
@@ -184,15 +244,15 @@ class _HomePageState extends State<HomePage> {
             color: Colors.white,
           ),
           Image.asset("assets/sponsors/ipl.jpg", height: 40),
-          Row(
-            children: [
-              _iconButton(Icons.bar_chart, "Fan Poll"),
-              SizedBox(width: 10),
-              _iconButton(Icons.emoji_events, "Viewers Choice"),
-              SizedBox(width: 10),
-              Icon(Icons.search, color: Colors.white, size: 30),
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     _iconButton(Icons.bar_chart, "Fan Poll"),
+          //     SizedBox(width: 10),
+          //     _iconButton(Icons.emoji_events, "Viewers Choice"),
+          //     SizedBox(width: 10),
+          //     Icon(Icons.search, color: Colors.white, size: 30),
+          //   ],
+          // ),
         ],
       ),
     );
@@ -223,39 +283,6 @@ class _HomePageState extends State<HomePage> {
               progressIndicatorColor: Colors.amber,
             ),
             SizedBox(height: 10),
-            // Carousel Slider for Video Thumbnails
-            // CarouselSlider(
-            //   items: videos.map((video) {
-            //     return GestureDetector(
-            //       onTap: () {
-            //         _initializePlayer(
-            //             video['video_link']); // Play the selected video
-            //         setState(() {});
-            //       },
-            //       child: Column(
-            //         children: [
-            //           Image.network(video['thumbnail_url'],
-            //               width: 250, height: 115, fit: BoxFit.cover),
-            //           SizedBox(height: 10),
-            //           Text(
-            //             video['title'],
-            //             style: TextStyle(
-            //                 color: Colors.white, fontWeight: FontWeight.bold),
-            //             textAlign: TextAlign.center,
-            //           ),
-            //         ],
-            //       ),
-            //     );
-            //   }).toList(),
-            //   options: CarouselOptions(
-            //     height: 180,
-            //     autoPlay: true,
-            //     enlargeCenterPage: true,
-            //     viewportFraction: 0.8,
-            //     aspectRatio: 2.0,
-            //     initialPage: 0,
-            //   ),
-            // ),
           ],
         ),
       ],
