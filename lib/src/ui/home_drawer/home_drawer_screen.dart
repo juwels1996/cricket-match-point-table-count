@@ -32,7 +32,7 @@ class BuildDrawer extends StatelessWidget {
                 Image.asset("assets/sponsors/ipl.jpg", height: 40),
                 SizedBox(width: 10),
                 Text(
-                  "INDIAN PREMIER LEAGUE",
+                  "DEEDAR PREMIER LEAGUE",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
