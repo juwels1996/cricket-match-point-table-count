@@ -13,7 +13,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
   // Fetch matches data from the backend
   Future<void> fetchMatches() async {
     final response =
-        await http.get(Uri.parse("http://64.227.150.216:8454/api/matches/"));
+        await http.get(Uri.parse("https://backend.dplt10.org/api/matches/"));
     if (response.statusCode == 200) {
       print("Matches response--------: ${response.body}");
       setState(() {

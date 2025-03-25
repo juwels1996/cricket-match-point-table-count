@@ -13,7 +13,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
 
   Future<void> fetchTeams() async {
     final response =
-        await http.get(Uri.parse("http://64.227.150.216:8454/api/teams/"));
+        await http.get(Uri.parse("https://backend.dplt10.org/api/teams/"));
     if (response.statusCode == 200) {
       setState(() {
         teams = jsonDecode(response.body);

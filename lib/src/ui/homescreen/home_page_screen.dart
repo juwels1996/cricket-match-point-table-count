@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   // Fetch YouTube video data from the backend
   Future<void> fetchVideos() async {
     final response = await http
-        .get(Uri.parse("http://64.227.150.216:8454/api/youtube_videos/"));
+        .get(Uri.parse("https://backend.dplt10.org/api/youtube_videos/"));
     if (response.statusCode == 200) {
       setState(() {
         videos = jsonDecode(response.body);

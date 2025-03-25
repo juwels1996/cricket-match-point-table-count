@@ -17,7 +17,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
 
   Future<void> fetchTeamDetails() async {
     final response = await http.get(
-      Uri.parse("http://64.227.150.216:8454/api/teams/${widget.teamId}/"),
+      Uri.parse("https://backend.dplt10.org/api/teams/${widget.teamId}/"),
     );
 
     if (response.statusCode == 200) {
