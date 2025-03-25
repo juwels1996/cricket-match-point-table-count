@@ -1,3 +1,4 @@
+import 'package:cricket_scorecard/src/ui/news/news_screen.dart';
 import 'package:flutter/material.dart';
 
 class AboutUsInformation extends StatelessWidget {
@@ -22,20 +23,42 @@ class AboutUsInformation extends StatelessWidget {
               ),
               textAlign: TextAlign.start,
             ),
-            Text(
-              "Anti Corruption Code",
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
+            GestureDetector(
+              onTap: () {
+                // Navigate to TeamDetailScreen when a team name is tapped
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PDFListScreen(),
+                  ),
+                );
+              },
+              child: Text(
+                "Anti Corruption Code",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
-            Text(
-              "Code of conduct for player and teams officials",
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
+            GestureDetector(
+              onTap: () {
+                // Navigate to TeamDetailScreen when a team name is tapped
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PDFListScreen(),
+                  ),
+                );
+              },
+              child: Text(
+                "Code of conduct for player and teams officials",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
           ],

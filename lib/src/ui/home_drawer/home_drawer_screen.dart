@@ -108,7 +108,7 @@ class BuildDrawer extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => AdviserScreen()));
               },
               child: Text(
-                'Governing Counsil',
+                'Governing Council',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 14,

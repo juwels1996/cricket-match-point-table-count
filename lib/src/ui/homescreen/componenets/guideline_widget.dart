@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../news/news_screen.dart';
+
 class GuidelineWidget extends StatelessWidget {
   const GuidelineWidget({super.key});
 
@@ -21,20 +23,42 @@ class GuidelineWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
-              "Dpl Code of conduct for Match officials",
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
+            GestureDetector(
+              onTap: () {
+                // Navigate to TeamDetailScreen when a team name is tapped
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PDFListScreen(),
+                  ),
+                );
+              },
+              child: Text(
+                "Dpl Code of conduct for Match officials",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
-            Text(
-              "Governing Council",
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
+            GestureDetector(
+              onTap: () {
+                // Navigate to TeamDetailScreen when a team name is tapped
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PDFListScreen(),
+                  ),
+                );
+              },
+              child: Text(
+                "Governing Council",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
           ],
