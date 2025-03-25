@@ -5,24 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../home_drawer/home_drawer_screen.dart';
 import '../over-stat/overall_stats_screen.dart';
-import '../player_screen/player_screen_page.dart';
 import '../point_table/point_table_screen.dart';
 import '../team_screen/all_team_player_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-
 import '../widgets/highlight_card.dart';
 import 'componenets/video_list_screen.dart';
 
@@ -39,7 +26,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    fetchVideos(); // Fetch the YouTube videos when the page loads
+    // fetchVideos(); // Fetch the YouTube videos when the page loads
   }
 
   // Fetch YouTube video data from the backend

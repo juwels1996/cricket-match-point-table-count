@@ -54,6 +54,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       color: Colors.white,
                       child: ListTile(
                         title: Text(
+                          textAlign: TextAlign.center,
                           "$team1Name vs $team2Name",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 13),
@@ -82,6 +83,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       color: Colors.white,
                       child: ListTile(
                         title: Text(
+                          textAlign: TextAlign.center,
                           "$team1Name vs $team2Name",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 13),
