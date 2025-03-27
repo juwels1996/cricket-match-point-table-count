@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import '../../utils/responsives_classes.dart';
 import '../home_drawer/home_drawer_screen.dart';
 import '../over-stat/overall_stats_screen.dart';
 import '../point_table/point_table_screen.dart';
@@ -13,6 +14,7 @@ import '../team_screen/all_team_player_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
+import '../widgets/button/hoverbutton.dart';
 import '../widgets/highlight_card.dart';
 import 'componenets/build_sponsor_widget.dart';
 import 'componenets/team_list_widget.dart';
@@ -181,55 +183,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildteam() {
-    final List<String> teams = [
-      "Chennai Super Kings",
-      "Delhi Capitals",
-      "Gujarat Titans",
-      "Kolkata Knight Riders",
-      "Lucknow Super Giants",
-      "Mumbai Indians",
-      "Punjab Kings",
-      "Rajasthan Royals",
-      "Royal Challengers Bengaluru",
-      "Sunrisers Hyderabad",
-    ];
-
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text(
-          'TEAM',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.black,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: teams.length,
-          itemBuilder: (context, index) {
-            return Card(
-              color: Colors.black,
-              elevation: 5,
-              margin: EdgeInsets.symmetric(vertical: 8),
-              child: ListTile(
-                title: Text(
-                  teams[index],
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
   // Header Section - IPL Logo, Search, Poll, Choice
   Widget _buildHeader() {
     return Container(
@@ -268,16 +221,16 @@ class _HomePageState extends State<HomePage> {
       alignment: Alignment.center,
       children: [
         Image.asset(
+          width: MediaQuery.of(context).size.width * 0.5,
           "assets/sponsors/hero_banner.png", // Your image asset
-          width: double.infinity,
           height: 160,
-          fit: BoxFit.cover,
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // YouTube Player to play the selected video
             YoutubePlayer(
+              aspectRatio: 16 / 6,
               controller: _controller,
               showVideoProgressIndicator: true,
               progressIndicatorColor: Colors.amber,
@@ -362,11 +315,13 @@ Widget _buildQuickLinks(BuildContext context) {
         GridView.count(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          // Two columns
+          crossAxisCount: Responsive.isLargeScreen(context)
+              ? 4
+              : 2, // Adjust column count based on screen size
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
-          childAspectRatio: 3.5,
+          childAspectRatio:
+              Responsive.isLargeScreen(context) ? 3.5 : 4, // Adjust item size
           children: [
             _quickLinkButton("Fixtures & Res..", Icons.calendar_today, () {
               Navigator.push(context,
@@ -395,44 +350,10 @@ Widget _buildQuickLinks(BuildContext context) {
 
 /// ✅ **Quick Link Button with Hover & Click Effects**
 Widget _quickLinkButton(String title, IconData icon, Function onTap) {
-  return MouseRegion(
-    onEnter: (event) =>
-        HapticFeedback.lightImpact(), // Vibration on hover (if supported)
-    cursor: SystemMouseCursors.click,
-    child: InkWell(
-      onTap: () => onTap(),
-      borderRadius: BorderRadius.circular(10),
-      splashColor: Colors.blue.withOpacity(0.3),
-      // Ripple Effect
-      highlightColor: Colors.blue.withOpacity(0.1),
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
-        // Smooth hover effect
-        curve: Curves.easeInOut,
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black26),
-          borderRadius: BorderRadius.circular(10),
-          color: kIsWeb ? Colors.white : Colors.transparent, // Web Hover Effect
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.black, size: 12),
-            SizedBox(width: 8),
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
+  return HoverButton(
+    title: title,
+    icon: icon,
+    onTap: onTap,
   );
 }
 

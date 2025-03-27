@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cricket_scorecard/src/ui/team_screen/team_details_screen/team_details_Screen.dart';
+import 'package:cricket_scorecard/src/utils/responsives_classes.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -50,8 +51,11 @@ class _TeamsScreenState extends State<TeamsScreen> {
               padding: const EdgeInsets.all(12.0),
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      MediaQuery.of(context).size.width > 600 ? 3 : 2,
+                  crossAxisCount: Responsive.isSmallScreen(context)
+                      ? 2
+                      : Responsive.isMediumScreen(context)
+                          ? 3
+                          : 4,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   childAspectRatio: 1, // Square shape
@@ -74,16 +78,13 @@ class TeamCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, Color> teamColors = {
-      "Chennai Super Kings": Color(0xFFFFCC00), // Yellow
-      "Mumbai Indians": Color(0xFF045093), // Blue
-      "Royal Challengers Bengaluru": Color(0xFFDA1818), // Red
-      "Delhi Capitals": Color(0xFF17449B), // Dark Blue
-      "Kolkata Knight Riders": Color(0xFF3F2051), // Purple
-      "Rajasthan Royals": Color(0xFFEA1A85), // Pink
-      "Sunrisers Hyderabad": Color(0xFFFF822A), // Orange
-      "Punjab Kings": Color(0xFFDA1818), // Red
-      "Gujarat Titans": Color(0xFF19326A), // Navy Blue
-      "Lucknow Super Giants": Color(0xFF004C99), // Royal Blue
+      "Northan Falcons": Color(0xFFFFCC00), // Yellow
+      "Kabir Chairman Warriors": Color(0xFF045093), // Blue
+      "Ripon Cricket Stars": Color(0xFFDA1818), // Red
+      "The Kingdon Of South": Color(0xFF17443D), // Dark Blue
+      "Dr. Ali Legal Lions": Color(0xFF3F2051), // Purple
+      // Pink
+      "Doctor's Super Kings": Color(0xFFFF822A), // Orange
     };
 
     return GestureDetector(
@@ -103,7 +104,7 @@ class TeamCard extends StatelessWidget {
           children: [
             // 🔹 Top curved banner for team logo
             Container(
-              height: 80,
+              height: MediaQuery.of(context).size.height * 0.2,
               decoration: BoxDecoration(
                 color: teamColors[team['name']] ??
                     Colors.grey, // ✅ Manual color assignment

@@ -1,3 +1,4 @@
+import 'package:cricket_scorecard/src/utils/responsives_classes.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -29,7 +30,11 @@ class _HighlightCardState extends State<HighlightCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.width ?? 150,
+      width: Responsive.isSmallScreen(context)
+          ? 150
+          : Responsive.isMediumScreen(context)
+              ? 200
+              : MediaQuery.of(context).size.width * 0.25,
       margin: EdgeInsets.only(right: 12),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
@@ -48,9 +53,9 @@ class _HighlightCardState extends State<HighlightCard> {
             ),
             child: Image.network(
               widget.imageUrl,
-              height: 110,
+              height: MediaQuery.of(context).size.height * 0.15,
               width: double.infinity,
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
           ),
           Padding(
