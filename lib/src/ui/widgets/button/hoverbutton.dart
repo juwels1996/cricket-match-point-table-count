@@ -1,3 +1,4 @@
+import 'package:cricket_scorecard/src/utils/responsives_classes.dart';
 import 'package:flutter/material.dart';
 
 class HoverButton extends StatefulWidget {
@@ -47,17 +48,15 @@ class _HoverButtonState extends State<HoverButton> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                widget.icon,
-                color: _iconTextColor, // Set dynamic color for the icon
-                size: 20,
-              ),
+              Icon(widget.icon,
+                  color: _iconTextColor, // Set dynamic color for the icon
+                  size: Responsive.isSmallScreen(context) ? 14 : 20),
               // SizedBox(height: 8),
               Text(
                 widget.title,
                 style: TextStyle(
                   color: _iconTextColor, // Set dynamic color for the text
-                  fontSize: 14,
+                  fontSize: Responsive.isSmallScreen(context) ? 10 : 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),

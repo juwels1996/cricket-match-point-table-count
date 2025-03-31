@@ -1,6 +1,5 @@
 import 'package:cricket_scorecard/src/ui/homescreen/componenets/video_player_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../widgets/highlight_card.dart';
@@ -15,7 +14,7 @@ class VideoListScreen extends StatefulWidget {
 class _VideoListScreenState extends State<VideoListScreen> {
   List videos = [];
 
-  late YoutubePlayerController _controller;
+  // late YoutubePlayerController _controller;
 
   @override
   void initState() {
@@ -34,22 +33,22 @@ class _VideoListScreenState extends State<VideoListScreen> {
       });
       // Initialize the YouTube player with the first video
       if (videos.isNotEmpty) {
-        _initializePlayer(videos[0]['video_link']);
+        // _initializePlayer(videos[0]['video_link']);
       }
     }
   }
 
 // Initialize the YouTube Player with the first video URL
-  void _initializePlayer(String videoUrl) {
-    final videoId = YoutubePlayer.convertUrlToId(videoUrl);
-    _controller = YoutubePlayerController(
-      initialVideoId: videoId!,
-      flags: YoutubePlayerFlags(
-        autoPlay: false,
-        mute: false,
-      ),
-    );
-  }
+//   void _initializePlayer(String videoUrl) {
+//     final videoId = YoutubePlayer.convertUrlToId(videoUrl);
+//     _controller = YoutubePlayerController(
+//       initialVideoId: videoId!,
+//       flags: YoutubePlayerFlags(
+//         autoPlay: false,
+//         mute: false,
+//       ),
+//     );
+//   }
 
   @override
   Widget build(BuildContext context) {

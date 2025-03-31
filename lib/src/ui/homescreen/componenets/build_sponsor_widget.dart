@@ -1,3 +1,4 @@
+import 'package:cricket_scorecard/src/utils/responsives_classes.dart';
 import 'package:flutter/material.dart';
 
 class SponsorScreen extends StatelessWidget {
@@ -11,30 +12,31 @@ class SponsorScreen extends StatelessWidget {
           SizedBox(height: 20),
           // Title Sponsors Section
           _buildSectionTitle("Official Broadcaster, Title Sponsor &  Partner"),
-          _buildSponsorRow([
-            "assets/sponsors/1.png",
-            "assets/sponsors/2.png",
-            "assets/sponsors/3.png",
+          _buildSponsorRow(context, [
+            "assets/sponsors/sponsor_1.jpg",
+            "assets/sponsors/sponsor_2.png",
+            "assets/sponsors/sponsor_3.jpg",
           ]),
           SizedBox(height: 20),
 
           // Associate Partners Section
           _buildSectionTitle("Associate Partners"),
-          _buildSponsorRow([
-            "assets/sponsors/ipl.jpg",
-            "assets/sponsors/tata.jpeg",
-            "assets/sponsors/ipl.jpg",
+          _buildSponsorRow(context, [
+            "assets/sponsors/sponsor_1.jpg",
+            "assets/sponsors/sponsor_2.png",
+            "assets/sponsors/sponsor_3.jpg",
           ]),
           SizedBox(height: 20),
 
           // Official Partners Section
-          _buildSectionTitle(
-              "Official Umpire Partner & Official Strategic Timeout Partner"),
-          _buildSponsorRow([
-            "assets/sponsors/ipl.jpg",
-            "assets/sponsors/tata.jpeg",
-            "assets/sponsors/ipl.jpg",
-          ]),
+          // _buildSectionTitle(
+          //     "Official Umpire Partner & Official Strategic Timeout Partner"),
+          // _buildSponsorRow([
+          //   "assets/sponsors/ipl.jpg",
+          //   "assets/sponsors/tata.jpeg",
+          //   "assets/sponsors/ipl.jpg",
+          // ]
+          // ),
         ],
       ),
     );
@@ -62,15 +64,20 @@ class SponsorScreen extends StatelessWidget {
   }
 
   // Function to build the row of sponsors
-  Widget _buildSponsorRow(List<String> images) {
+  Widget _buildSponsorRow(BuildContext context, List<String> images) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: images.map((image) {
         return Expanded(
           child: Container(
             padding: EdgeInsets.all(8),
-            child: Image.asset(image,
-                height: 60, width: 60), // Image size adjusted
+            child: Image.asset(
+              image,
+              height: Responsive.isSmallScreen(context) ? 70 : 120,
+              width: Responsive.isSmallScreen(context)
+                  ? 70
+                  : 120, // Image size adjusted
+            ),
           ),
         );
       }).toList(),

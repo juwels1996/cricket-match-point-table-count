@@ -5,7 +5,8 @@ import 'package:cricket_scorecard/src/ui/matches_screen/matches_screen_page.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 import '../../utils/responsives_classes.dart';
 import '../home_drawer/home_drawer_screen.dart';
 import '../over-stat/overall_stats_screen.dart';
@@ -27,7 +28,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List videos = [];
-  late YoutubePlayerController _controller;
+  late final player = Player();
+  late final controller = VideoController(player);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool isLoading = true;
@@ -35,7 +37,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    fetchVideos(); // Fetch the YouTube videos when the page loads
+    fetchVideos();
+    MediaKit.ensureInitialized();
   }
 
   // Fetch YouTube video data from the backend
@@ -45,15 +48,12 @@ class _HomePageState extends State<HomePage> {
     if (response.statusCode == 200) {
       setState(() {
         videos = jsonDecode(response.body);
-        print("video list check $videos");
       });
       // Initialize the YouTube player with the first video
       if (videos.isNotEmpty) {
         _initializePlayer(videos[0]['video_link']);
       }
-    } else {
-      print("video list check $videos");
-    }
+    } else {}
     setState(() {
       isLoading = false;
     });
@@ -61,19 +61,14 @@ class _HomePageState extends State<HomePage> {
 
   // Initialize the YouTube Player with the first video URL
   void _initializePlayer(String videoUrl) {
-    final videoId = YoutubePlayer.convertUrlToId(videoUrl);
-    _controller = YoutubePlayerController(
-      initialVideoId: videoId!,
-      flags: YoutubePlayerFlags(
-        autoPlay: false,
-        mute: false,
-      ),
-    );
+    player.open(Media(
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"));
+    print("Playing video from URL-------: $videoUrl");
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    player.dispose();
     super.dispose();
   }
 
@@ -228,14 +223,16 @@ class _HomePageState extends State<HomePage> {
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // YouTube Player to play the selected video
-            YoutubePlayer(
-              aspectRatio: 16 / 6,
-              controller: _controller,
-              showVideoProgressIndicator: true,
-              progressIndicatorColor: Colors.amber,
+            SizedBox(
+              width: Responsive.isSmallScreen(context)
+                  ? MediaQuery.of(context).size.width
+                  : MediaQuery.of(context).size.width,
+              height: Responsive.isSmallScreen(context)
+                  ? MediaQuery.of(context).size.width * 9.0 / 16.0
+                  : MediaQuery.of(context).size.width * 9.0 / 26.0,
+              // Use [Video] widget to display video output.
+              child: Video(controller: controller),
             ),
-            SizedBox(height: 10),
           ],
         ),
       ],
@@ -243,39 +240,39 @@ class _HomePageState extends State<HomePage> {
   }
 
   // YouTube Video Carousel
-  Widget _buildYouTubeVideoCarousel() {
-    return CarouselSlider(
-      items: videos.map((video) {
-        return GestureDetector(
-          onTap: () {
-            _initializePlayer(video['video_link']); // Play selected video
-            setState(() {});
-          },
-          child: Column(
-            children: [
-              Image.network(video['thumbnail_url'],
-                  width: 300, height: 150, fit: BoxFit.cover),
-              SizedBox(height: 10),
-              Text(
-                video['title'],
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-      options: CarouselOptions(
-        height: 180,
-        autoPlay: true,
-        enlargeCenterPage: true,
-        viewportFraction: 0.8,
-        aspectRatio: 2.0,
-        initialPage: 0,
-      ),
-    );
-  }
+  // Widget _buildYouTubeVideoCarousel() {
+  //   return CarouselSlider(
+  //     items: videos.map((video) {
+  //       return GestureDetector(
+  //         onTap: () {
+  //           _initializePlayer(video['video_link']); // Play selected video
+  //           setState(() {});
+  //         },
+  //         child: Column(
+  //           children: [
+  //             Image.network(video['thumbnail_url'],
+  //                 width: 300, height: 150, fit: BoxFit.cover),
+  //             SizedBox(height: 10),
+  //             Text(
+  //               video['title'],
+  //               style:
+  //                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+  //               textAlign: TextAlign.center,
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }).toList(),
+  //     options: CarouselOptions(
+  //       height: 180,
+  //       autoPlay: true,
+  //       enlargeCenterPage: true,
+  //       viewportFraction: 0.8,
+  //       aspectRatio: 2.0,
+  //       initialPage: 0,
+  //     ),
+  //   );
+  // }
 
 // YouTube Video Carousel
 }
