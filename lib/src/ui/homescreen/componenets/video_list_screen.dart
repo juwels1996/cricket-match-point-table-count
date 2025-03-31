@@ -1,6 +1,8 @@
 import 'package:cricket_scorecard/src/ui/homescreen/componenets/video_player_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 import 'dart:convert';
 import '../../widgets/highlight_card.dart';
 
@@ -14,12 +16,14 @@ class VideoListScreen extends StatefulWidget {
 class _VideoListScreenState extends State<VideoListScreen> {
   List videos = [];
 
-  // late YoutubePlayerController _controller;
+  late final player = Player();
+  late final controller = VideoController(player);
 
   @override
   void initState() {
     super.initState();
-    fetchVideos(); // Fetch the YouTube videos when the page loads
+    fetchVideos();
+    MediaKit.ensureInitialized();
   }
 
 // Fetch YouTube video data from the backend
@@ -33,27 +37,20 @@ class _VideoListScreenState extends State<VideoListScreen> {
       });
       // Initialize the YouTube player with the first video
       if (videos.isNotEmpty) {
-        // _initializePlayer(videos[0]['video_link']);
+        _initializePlayer(videos[0]['video_link']);
       }
     }
   }
 
-// Initialize the YouTube Player with the first video URL
-//   void _initializePlayer(String videoUrl) {
-//     final videoId = YoutubePlayer.convertUrlToId(videoUrl);
-//     _controller = YoutubePlayerController(
-//       initialVideoId: videoId!,
-//       flags: YoutubePlayerFlags(
-//         autoPlay: false,
-//         mute: false,
-//       ),
-//     );
-//   }
+  void _initializePlayer(String videoUrl) {
+    player.open(Media("https://files.catbox.moe/moupoc.mp4"));
+    print("Playing video from URL-------: $videoUrl");
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black12,
+      backgroundColor: Colors.black,
       appBar: AppBar(title: Text("Magic Moments - All Videos")),
       body: ListView.builder(
         scrollDirection: Axis.vertical,
@@ -69,8 +66,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
                   ),
               child: Column(
                 children: [
-                  HighlightCard(
-                    width: MediaQuery.of(context).size.width * 0.8,
+                  HighlightCard1(
                     title: videos[index]['title'],
                     imageUrl: videos[index]['thumbnail_url'],
                     date: videos[index]['created_at'],

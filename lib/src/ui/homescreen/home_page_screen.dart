@@ -61,8 +61,7 @@ class _HomePageState extends State<HomePage> {
 
   // Initialize the YouTube Player with the first video URL
   void _initializePlayer(String videoUrl) {
-    player.open(Media(
-        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"));
+    player.open(Media("https://files.catbox.moe/moupoc.mp4"));
     print("Playing video from URL-------: $videoUrl");
   }
 
