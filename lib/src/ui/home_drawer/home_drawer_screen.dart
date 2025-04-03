@@ -29,7 +29,7 @@ class BuildDrawer extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Image.asset("assets/sponsors/ipl.jpg", height: 40),
+                // Image.asset("assets/sponsors/ipl.jpg", height: 40),
                 SizedBox(width: 10),
                 Text(
                   "DEEDAR PREMIER LEAGUE",

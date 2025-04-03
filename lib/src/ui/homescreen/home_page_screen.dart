@@ -62,7 +62,6 @@ class _HomePageState extends State<HomePage> {
   // Initialize the YouTube Player with the first video URL
   void _initializePlayer(String videoUrl) {
     player.open(Media("https://files.catbox.moe/moupoc.mp4"));
-    print("Playing video from URL-------: $videoUrl");
   }
 
   @override
@@ -78,32 +77,29 @@ class _HomePageState extends State<HomePage> {
         key: _scaffoldKey,
         drawer: BuildDrawer(context: context),
         backgroundColor: Colors.white,
-        body: RefreshIndicator(
-          onRefresh: fetchVideos, // Trigger API call when pulled down
-          child: isLoading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildHeader(),
-                      _buildHeroBanner(),
-                      // Keep the Hero Banner as is// Use carousel for video thumbnails
-                      _buildQuickLinks(context),
-                      _buildMagicMomentsSection(),
-                      SponsorScreen(),
-                      TeamListScreen(),
-                      AboutUsInformation(),
-                      GuidelineWidget(),
-                      ContactUsWidget(),
+        body: isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(),
+                    _buildHeroBanner(),
+                    // Keep the Hero Banner as is// Use carousel for video thumbnails
+                    _buildQuickLinks(context),
+                    _buildMagicMomentsSection(),
+                    SponsorScreen(),
+                    TeamListScreen(),
+                    AboutUsInformation(),
+                    GuidelineWidget(),
+                    ContactUsWidget(),
 
-                      // _buildSponsorBanner(),
-                    ],
-                  ),
+                    // _buildSponsorBanner(),
+                  ],
                 ),
-        ),
+              ),
       ),
     );
   }
@@ -190,7 +186,7 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.menu),
             color: Colors.white,
           ),
-          Image.asset("assets/sponsors/ipl.jpg", height: 40),
+          // Image.asset("assets/sponsors/ipl.jpg", height: 40),
           // Row(
           //   children: [
           //     _iconButton(Icons.bar_chart, "Fan Poll"),

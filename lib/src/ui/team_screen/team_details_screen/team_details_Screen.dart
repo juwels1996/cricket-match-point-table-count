@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
 import '../../../utils/responsives_classes.dart';
 
@@ -23,6 +24,8 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
     if (response.statusCode == 200) {
       setState(() {
         teamData = jsonDecode(response.body);
+
+        print("team details-----${response.body}");
       });
     }
   }
@@ -64,10 +67,10 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
               Center(
                 child: Image.network(
                   teamData!['logo'],
-                  height: 100,
+                  height: 100.h,
                 ),
               ),
-            SizedBox(height: 20),
+            SizedBox(height: 20.h),
 
             _buildCategorySection("Local Players", localPlayers),
             _buildCategorySection("Semi-Local Players", semiLocalPlayers),
@@ -114,7 +117,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
           child: Text(emptyMessage, style: TextStyle(color: Colors.grey)));
     }
 
-    int crossAxisCount = Responsive.isLargeScreen(context) ? 4 : 2;
+    int crossAxisCount = Responsive.isLargeScreen(context) ? 5 : 2;
 
     return GridView.builder(
       shrinkWrap: true,
@@ -123,7 +126,9 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
         crossAxisCount: crossAxisCount, // 2 on small, 4 on large screens
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 3 / 4, // Adjust for better layout
+        childAspectRatio: Responsive.isLargeScreen(context)
+            ? 1.5
+            : 1.1, // Adjust aspect ratio based on screen size
       ),
       itemCount: list.length,
       itemBuilder: (context, index) {
@@ -145,14 +150,14 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
                 item['image_url'],
-                height: 80,
-                width: 80,
+                height: 90.h,
+                width: 70,
                 fit: BoxFit.cover,
               ),
             )
           else
-            Icon(Icons.person, size: 60, color: Colors.grey),
-          SizedBox(height: 8),
+            Icon(Icons.person, size: 60.sp, color: Colors.grey),
+          SizedBox(height: 5),
           Text(
             item['name'],
             textAlign: TextAlign.center,
@@ -161,7 +166,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
           if (item.containsKey('role'))
             Text(
               item['role'],
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: Colors.grey, fontSize: 10),
             ),
         ],
       ),

@@ -45,7 +45,7 @@ class _AdviserScreenState extends State<AdviserScreen> {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
           childAspectRatio: Responsive.isLargeScreen(context)
-              ? 0.75
+              ? 1.2
               : 0.9, // Adjust aspect ratio based on screen size
         ),
         itemCount: advisers.length,
@@ -95,7 +95,7 @@ class _AdviserScreenState extends State<AdviserScreen> {
   // Function to get the number of columns based on the Responsive class
   int _getColumns(BuildContext context) {
     if (Responsive.isLargeScreen(context)) {
-      return 4; // For large screens, 4 columns
+      return 5; // For large screens, 4 columns
     } else if (Responsive.isMediumScreen(context)) {
       return 3; // For medium screens, 3 columns
     } else {

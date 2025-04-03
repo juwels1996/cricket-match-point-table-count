@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cricket_scorecard/src/ui/team_screen/team_details_screen/team_details_Screen.dart';
 import 'package:cricket_scorecard/src/utils/responsives_classes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
 
 class TeamsScreen extends StatefulWidget {
@@ -104,7 +105,7 @@ class TeamCard extends StatelessWidget {
           children: [
             // 🔹 Top curved banner for team logo
             Container(
-              height: MediaQuery.of(context).size.height * 0.2,
+              height: MediaQuery.of(context).size.height * 0.20,
               decoration: BoxDecoration(
                 color: teamColors[team['name']] ??
                     Colors.grey, // ✅ Manual color assignment
@@ -114,8 +115,8 @@ class TeamCard extends StatelessWidget {
               child: Center(
                 child: Image.network(
                   team['logo'],
-                  height: 50,
-                  fit: BoxFit.contain,
+                  height: 80.h,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

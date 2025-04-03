@@ -35,16 +35,11 @@ class _VideoListScreenState extends State<VideoListScreen> {
         videos = jsonDecode(response.body);
         print("video list check $videos");
       });
-      // Initialize the YouTube player with the first video
-      if (videos.isNotEmpty) {
-        _initializePlayer(videos[0]['video_link']);
-      }
     }
   }
 
   void _initializePlayer(String videoUrl) {
     player.open(Media("https://files.catbox.moe/moupoc.mp4"));
-    print("Playing video from URL-------: $videoUrl");
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:cricket_scorecard/src/utils/responsives_classes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 class HighlightCard extends StatefulWidget {
@@ -68,7 +69,7 @@ class _HighlightCardState extends State<HighlightCard> {
                   widget.title,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -77,7 +78,7 @@ class _HighlightCardState extends State<HighlightCard> {
                   DateFormat('dd MMM yyyy').format(DateTime.parse(widget.date)),
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 12,
+                    fontSize: 10,
                   ),
                 )
 
@@ -120,9 +121,9 @@ class _HighlightCard1State extends State<HighlightCard1> {
   Widget build(BuildContext context) {
     return Container(
       width: Responsive.isSmallScreen(context)
-          ? 200
+          ? 200.w
           : Responsive.isMediumScreen(context)
-              ? 250
+              ? 250.w
               : MediaQuery.of(context).size.width * 0.25,
       margin: EdgeInsets.only(right: 12),
       decoration: BoxDecoration(
@@ -157,7 +158,7 @@ class _HighlightCard1State extends State<HighlightCard1> {
                   widget.title,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -166,7 +167,7 @@ class _HighlightCard1State extends State<HighlightCard1> {
                   DateFormat('dd MMM yyyy').format(DateTime.parse(widget.date)),
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 12,
+                    fontSize: 10,
                   ),
                 )
 
