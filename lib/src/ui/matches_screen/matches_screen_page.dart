@@ -13,11 +13,18 @@ class _MatchesScreenState extends State<MatchesScreen> {
   // Fetch matches data from the backend
   Future<void> fetchMatches() async {
     final response =
-        await http.get(Uri.parse("https://backend.dplt10.org/api/matches/"));
+        await http.get(Uri.parse("http://192.168.0.106:8000/api/matches/"));
     if (response.statusCode == 200) {
       print("Matches response--------: ${response.body}");
       setState(() {
         matches = jsonDecode(response.body);
+
+        // Sort matches by date
+        matches.sort((a, b) {
+          DateTime dateA = DateTime.parse(a['date']);
+          DateTime dateB = DateTime.parse(b['date']);
+          return dateA.compareTo(dateB); // Ascending order
+        });
       });
     }
   }

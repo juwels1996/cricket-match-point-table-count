@@ -2,9 +2,9 @@ import 'package:cricket_scorecard/src/ui/homescreen/componenets/about_us_widget.
 import 'package:cricket_scorecard/src/ui/homescreen/componenets/contact_us_widget.dart';
 import 'package:cricket_scorecard/src/ui/homescreen/componenets/guideline_widget.dart';
 import 'package:cricket_scorecard/src/ui/matches_screen/matches_screen_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import '../../utils/responsives_classes.dart';
@@ -14,7 +14,6 @@ import '../point_table/point_table_screen.dart';
 import '../team_screen/all_team_player_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:carousel_slider/carousel_slider.dart';
 import '../widgets/button/hoverbutton.dart';
 import '../widgets/highlight_card.dart';
 import 'componenets/build_sponsor_widget.dart';
@@ -44,7 +43,7 @@ class _HomePageState extends State<HomePage> {
   // Fetch YouTube video data from the backend
   Future<void> fetchVideos() async {
     final response = await http
-        .get(Uri.parse("https://backend.dplt10.org/api/youtube_videos/"));
+        .get(Uri.parse("http://192.168.0.106:8000/api/youtube_videos/"));
     if (response.statusCode == 200) {
       setState(() {
         videos = jsonDecode(response.body);
@@ -61,7 +60,7 @@ class _HomePageState extends State<HomePage> {
 
   // Initialize the YouTube Player with the first video URL
   void _initializePlayer(String videoUrl) {
-    player.open(Media("https://files.catbox.moe/moupoc.mp4"));
+    player.open(Media(videoUrl));
   }
 
   @override
@@ -186,7 +185,7 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.menu),
             color: Colors.white,
           ),
-          // Image.asset("assets/sponsors/ipl.jpg", height: 40),
+          Image.asset("assets/sponsors/dpl2.png", height: 60.h),
           // Row(
           //   children: [
           //     _iconButton(Icons.bar_chart, "Fan Poll"),

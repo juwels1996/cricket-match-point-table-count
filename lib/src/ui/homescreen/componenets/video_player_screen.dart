@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:media_kit_video/media_kit_video_controls/src/controls/methods/video_state.dart';
-import 'package:cricket_scorecard/src/utils/responsives_classes.dart'; // Import your responsive class
 
 class VideoPlayerScreen extends StatefulWidget {
   final String videoLink;
@@ -26,7 +24,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   // Initialize the player with the video URL
   void _initializePlayer(String videoUrl) {
-    player.open(Media("https://files.catbox.moe/moupoc.mp4"));
+    player.open(Media(videoUrl));
     setState(() {
       isLoading = false;
     });

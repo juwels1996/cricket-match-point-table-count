@@ -18,7 +18,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
 
   Future<void> fetchTeamDetails() async {
     final response = await http.get(
-      Uri.parse("https://backend.dplt10.org/api/teams/${widget.teamId}/"),
+      Uri.parse("http://192.168.0.106:8000/api/teams/${widget.teamId}/"),
     );
 
     if (response.statusCode == 200) {
@@ -150,7 +150,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
                 item['image_url'],
-                height: 90.h,
+                height: 80.h,
                 width: 70,
                 fit: BoxFit.cover,
               ),
@@ -162,10 +162,12 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
             item['name'],
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
           if (item.containsKey('role'))
             Text(
-              item['role'],
+              item['role'] ?? 'Role not available',
               style: TextStyle(color: Colors.grey, fontSize: 10),
             ),
         ],

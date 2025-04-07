@@ -39,7 +39,7 @@ class _HoverButtonState extends State<HoverButton> {
         child: AnimatedContainer(
           duration: Duration(milliseconds: 200),
           curve: Curves.easeInOut,
-          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.black26),
             borderRadius: BorderRadius.circular(10),

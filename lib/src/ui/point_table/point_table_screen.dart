@@ -12,8 +12,9 @@ class _PointsTableScreenState extends State<PointsTableScreen> {
 
   Future<void> fetchPointsTable() async {
     final response = await http
-        .get(Uri.parse("https://backend.dplt10.org/api/points_table/"));
+        .get(Uri.parse("http://192.168.0.106:8000/api/points_table/"));
     if (response.statusCode == 200) {
+      print("Points table response--------: ${response.body}");
       setState(() {
         teams = jsonDecode(response.body);
       });
@@ -182,12 +183,12 @@ class _PointsTableScreenState extends State<PointsTableScreen> {
                                     child: Text(teams[index]['ties'].toString(),
                                         textAlign: TextAlign.center),
                                   ),
-                                  Expanded(
-                                    child: Text(
-                                        teams[index]['net_run_rate']
-                                            .toStringAsFixed(2),
-                                        textAlign: TextAlign.center),
-                                  ),
+                                  // Expanded(
+                                  //   child: Text(
+                                  //       teams[index]['net_run_rate'] ??
+                                  //           "No data",
+                                  //       textAlign: TextAlign.center),
+                                  // ),
                                   Expanded(
                                     child: Text(
                                         teams[index]['points'].toString(),

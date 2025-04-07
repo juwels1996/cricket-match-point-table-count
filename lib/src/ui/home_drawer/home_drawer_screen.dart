@@ -1,5 +1,6 @@
 import 'package:cricket_scorecard/src/ui/home_drawer/adviser_Screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../homescreen/componenets/video_list_screen.dart';
 import '../matches_screen/matches_screen_page.dart';
@@ -29,7 +30,7 @@ class BuildDrawer extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // Image.asset("assets/sponsors/ipl.jpg", height: 40),
+                Image.asset("assets/sponsors/dpl2.png", height: 70.h),
                 SizedBox(width: 10),
                 Text(
                   "DEEDAR PREMIER LEAGUE",

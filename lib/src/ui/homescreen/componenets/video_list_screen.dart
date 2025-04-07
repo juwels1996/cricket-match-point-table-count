@@ -29,7 +29,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
 // Fetch YouTube video data from the backend
   Future<void> fetchVideos() async {
     final response = await http
-        .get(Uri.parse("https://backend.dplt10.org/api/youtube_videos/"));
+        .get(Uri.parse("http://192.168.0.106:8000/api/youtube_videos/"));
     if (response.statusCode == 200) {
       setState(() {
         videos = jsonDecode(response.body);
@@ -39,7 +39,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
   }
 
   void _initializePlayer(String videoUrl) {
-    player.open(Media("https://files.catbox.moe/moupoc.mp4"));
+    player.open(Media(videoUrl));
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -66,10 +67,10 @@ class _PDFListScreenState extends State<PDFListScreen> {
                           topRight: Radius.circular(10),
                         ),
                         child: Image.asset(
-                          "assets/sponsors/hero_banner.png",
-                          fit: BoxFit.cover,
+                          "assets/sponsors/dpl2.png",
+                          fit: BoxFit.contain,
                           width: double.infinity,
-                          height: 150,
+                          height: 100.h,
                         ),
                       ),
                       // Title Section
