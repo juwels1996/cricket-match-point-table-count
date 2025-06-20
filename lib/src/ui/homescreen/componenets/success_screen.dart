@@ -157,7 +157,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                                               Object error,
                                               StackTrace? stackTrace) {
                                             return Image.asset(
-                                              'assets/sponsors/jjs.jpg',
+                                              'assets/sponsors/default1.png',
                                               height: 150,
                                               width: 150,
                                             ); // Local fallback image
