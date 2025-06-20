@@ -1,6 +1,7 @@
 import 'package:cricket_scorecard/src/ui/homescreen/componenets/about_us_widget.dart';
 import 'package:cricket_scorecard/src/ui/homescreen/componenets/contact_us_widget.dart';
 import 'package:cricket_scorecard/src/ui/homescreen/componenets/guideline_widget.dart';
+import 'package:cricket_scorecard/src/ui/homescreen/componenets/registration_form.dart';
 import 'package:cricket_scorecard/src/ui/matches_screen/matches_screen_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +44,7 @@ class _HomePageState extends State<HomePage> {
   // Fetch YouTube video data from the backend
   Future<void> fetchVideos() async {
     final response = await http
-        .get(Uri.parse("http://192.168.0.106:8000/api/youtube_videos/"));
+        .get(Uri.parse("http://192.168.68.102:8000/api/youtube_videos/"));
     if (response.statusCode == 200) {
       setState(() {
         videos = jsonDecode(response.body);
@@ -88,7 +89,18 @@ class _HomePageState extends State<HomePage> {
                     _buildHeroBanner(),
                     // Keep the Hero Banner as is// Use carousel for video thumbnails
                     _buildQuickLinks(context),
+
                     _buildMagicMomentsSection(),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RegistrationForm(),
+                            ),
+                          );
+                        },
+                        child: Text("Event Registraion Form")),
                     SponsorScreen(),
                     TeamListScreen(),
                     AboutUsInformation(),

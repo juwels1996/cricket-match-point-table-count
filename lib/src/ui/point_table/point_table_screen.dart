@@ -183,12 +183,13 @@ class _PointsTableScreenState extends State<PointsTableScreen> {
                                     child: Text(teams[index]['ties'].toString(),
                                         textAlign: TextAlign.center),
                                   ),
-                                  // Expanded(
-                                  //   child: Text(
-                                  //       teams[index]['net_run_rate'] ??
-                                  //           "No data",
-                                  //       textAlign: TextAlign.center),
-                                  // ),
+                                  Expanded(
+                                    child: Text(
+                                      (teams[index]['net_run_rate'] ?? 0)
+                                          .toString(), // Ensure it's converted to String
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
                                   Expanded(
                                     child: Text(
                                         teams[index]['points'].toString(),

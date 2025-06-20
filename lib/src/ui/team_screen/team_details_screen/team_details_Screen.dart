@@ -18,7 +18,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
 
   Future<void> fetchTeamDetails() async {
     final response = await http.get(
-      Uri.parse("http://192.168.0.106:8000/api/teams/${widget.teamId}/"),
+      Uri.parse("http://192.168.68.104:8000/api/teams/${widget.teamId}/"),
     );
 
     if (response.statusCode == 200) {
