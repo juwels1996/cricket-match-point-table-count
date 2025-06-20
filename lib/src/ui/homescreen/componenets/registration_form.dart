@@ -29,6 +29,15 @@ class _RegistrationFormState extends State<RegistrationForm> {
   // Variables to store image data for web and mobile
   XFile? _chosenImage; // For mobile
   String? _webImageDataUrl; // For web
+  final List<String> areaOptions = ['Local', 'Semi-Local', 'Overseas'];
+  String? selectedArea;
+
+  final List<String> categoryOptions = ['A', 'B', 'C'];
+  final List<String> specialityOptions = ['Bowler', 'Batsman', 'All-Rounder'];
+
+// ───── currently chosen items ────────────────────────────────────────────────
+  String? selectedCategory;
+  String? selectedSpeciality;
 
   // Image picker instance
   final ImagePicker picker = ImagePicker();
@@ -56,10 +65,19 @@ class _RegistrationFormState extends State<RegistrationForm> {
 
   Future<void> submitForm() async {
     if (_formKey.currentState!.validate()) {
-      final uri = Uri.parse(
-          'https://backend.dplt10.org/register_user/'); // Your API endpoint
+      if (selectedCategory == null ||
+          selectedSpeciality == null ||
+          selectedArea == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Please select Area, Category, and Speciality')),
+        );
+        return;
+      }
 
+      final uri = Uri.parse('https://backend.dplt10.org/register_user/');
       var request = http.MultipartRequest('POST', uri);
+
       request.fields['name'] = nameController.text;
       request.fields['bkash_number'] = bkashAccountController.text;
       request.fields['bkash_transaction_id'] =
@@ -69,9 +87,10 @@ class _RegistrationFormState extends State<RegistrationForm> {
       request.fields['district'] = districtController.text;
       request.fields['nid_or_birth_certificate_no'] = nidController.text;
       request.fields['date_of_birth'] = birthDateController.text;
-      request.fields['area'] = areaController.text;
-      request.fields['player_category'] = categoryController.text;
-      request.fields['speciality'] = specialityController.text;
+      request.fields['area'] =
+          selectedArea!; // Still string, but backend should allow it
+      request.fields['player_category'] = selectedCategory!;
+      request.fields['speciality'] = selectedSpeciality!;
 
       // Add image file (only if it's available)
       if (_chosenImage != null) {
@@ -125,7 +144,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[50],
+      backgroundColor: Colors.white,
       appBar: AppBar(title: Text('Player Registration')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -150,27 +169,63 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 key: _formKey,
                 child: Column(
                   children: [
+                    buildTextField(bkashAccountController, 'Bkash Account No'),
+                    buildTextField(
+                        bkashTransactionIdController, 'Bkash Transaction ID'),
                     buildTextField(nameController, 'Name'),
                     buildTextField(phoneController, 'Phone Number'),
                     buildTextField(addressController, 'Address'),
                     buildTextField(districtController, 'District'),
                     buildTextField(nidController, 'NID/Birth Certificate No'),
-                    buildTextField(birthDateController, 'Date of Birth'),
-                    buildTextField(bkashAccountController, 'Bkash Account No'),
-                    buildTextField(
-                        bkashTransactionIdController, 'Bkash Transaction ID'),
-                    buildTextField(
-                        areaController, 'Area (Local/Semi-Local/Overseas)'),
-                    buildTextField(categoryController, 'Category (A/B/C)'),
-                    buildTextField(specialityController,
-                        'Speciality (Bowler/Batsman/All-Rounder)'),
+                    buildDatePickerField(birthDateController, 'Date of Birth'),
+
+                    // buildTextField(
+                    //     areaController, 'Area (Local/Semi-Local/Overseas)'),
+                    buildDropdownField(
+                      selectedValue: selectedArea,
+                      items: areaOptions,
+                      label: 'Area',
+                      onChanged: (val) {
+                        setState(() {
+                          selectedArea = val;
+                        });
+                      },
+                    ),
+
+                    buildDropdownField<String>(
+                      selectedValue: selectedCategory,
+                      items: categoryOptions,
+                      label: 'category',
+                      onChanged: (val) =>
+                          setState(() => selectedCategory = val),
+                    ),
+
+                    buildDropdownField<String>(
+                      selectedValue: selectedSpeciality,
+                      items: specialityOptions,
+                      label: 'Speciality',
+                      onChanged: (val) =>
+                          setState(() => selectedSpeciality = val),
+                    ),
                   ],
                 ),
               ),
               SizedBox(height: 20),
               ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.blueAccent),
+                ),
                 onPressed: submitForm,
-                child: Text('Submit'),
+                child: Text(
+                  'Submit',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Roboto',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
@@ -184,8 +239,75 @@ class _RegistrationFormState extends State<RegistrationForm> {
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: TextFormField(
         controller: controller,
-        decoration: InputDecoration(labelText: label),
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
         validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+      ),
+    );
+  }
+
+  Widget buildDropdownField<T>({
+    required T? selectedValue,
+    required List<T> items,
+    required String label,
+    required void Function(T?) onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: DropdownButtonFormField<T>(
+        value: selectedValue,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+        items: items
+            .map((item) => DropdownMenuItem<T>(
+                  value: item,
+                  child: Text(item is Map
+                      ? item['label'] // Map → show label
+                      : item.toString()), // String/int → show itself
+                ))
+            .toList(),
+        onChanged: onChanged,
+        validator: (val) => val == null ? 'Required' : null,
+      ),
+    );
+  }
+
+  Widget buildDatePickerField(TextEditingController controller, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: TextFormField(
+        controller: controller,
+        readOnly: true,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(color: Colors.grey, width: 1.0),
+          ),
+          suffixIcon: const Icon(Icons.calendar_today),
+        ),
+        validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+        onTap: () async {
+          final now = DateTime.now();
+          final picked = await showDatePicker(
+            context: context,
+            initialDate: DateTime(now.year - 18), // sensible default
+            firstDate: DateTime(1900),
+            lastDate: now,
+          );
+          if (picked != null) {
+            controller.text =
+                '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+          }
+        },
       ),
     );
   }

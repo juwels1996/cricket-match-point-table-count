@@ -18,6 +18,7 @@ import 'dart:convert';
 import '../widgets/button/hoverbutton.dart';
 import '../widgets/highlight_card.dart';
 import 'componenets/build_sponsor_widget.dart';
+import 'componenets/event_registration_card.dart';
 import 'componenets/team_list_widget.dart';
 import 'componenets/video_list_screen.dart';
 
@@ -87,20 +88,9 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     _buildHeader(),
                     _buildHeroBanner(),
-                    // Keep the Hero Banner as is// Use carousel for video thumbnails
                     _buildQuickLinks(context),
-
                     _buildMagicMomentsSection(),
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RegistrationForm(),
-                            ),
-                          );
-                        },
-                        child: Text("Event Registraion Form")),
+                    EventRegistrationCards(),
                     SponsorScreen(),
                     TeamListScreen(),
                     AboutUsInformation(),

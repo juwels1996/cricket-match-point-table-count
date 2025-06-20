@@ -128,7 +128,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                                         child: Image.network(
                                           // Check if player photo exists or use default image
                                           userData['player_photo'] != null
-                                              ? 'http://192.168.68.102:8000${userData['player_photo']}'
+                                              ? 'http://backend.dplt10.org${userData['player_photo']}'
                                               : 'https://via.placeholder.com/150',
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
