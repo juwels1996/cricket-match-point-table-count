@@ -67,7 +67,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          SizedBox(height: 20),
                           Image.asset(
                             'assets/sponsors/dpl2.png',
                             height: 100,
@@ -222,8 +221,12 @@ class _SuccessScreenState extends State<SuccessScreen> {
                             ],
                           ),
                           SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          Wrap(
+                            alignment: WrapAlignment
+                                .center, // Align items to the center
+                            spacing: 10, // Horizontal space between buttons
+                            runSpacing:
+                                10, // Vertical space between lines of buttons
                             children: [
                               CustomButton(
                                 text:
@@ -233,7 +236,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
                                   print("Button pressed!");
                                 },
                               ),
-                              SizedBox(width: 10),
                               CustomButton(
                                 text: "dplt10.org",
                                 icon:
@@ -243,7 +245,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
                                   print("Button pressed!");
                                 },
                               ),
-                              SizedBox(width: 10),
                               CustomButton(
                                 text:
                                     "Fan Group - DPL fan Arena", // You can pass an icon here

@@ -23,6 +23,8 @@ class _RegistrationFormState extends State<RegistrationForm> {
   final districtController = TextEditingController();
   final nidController = TextEditingController();
   final birthDateController = TextEditingController();
+  final bkashAccountController = TextEditingController();
+  final bkashTransactionIdController = TextEditingController();
 
   // Variables to store image data for web and mobile
   XFile? _chosenImage; // For mobile
@@ -59,6 +61,9 @@ class _RegistrationFormState extends State<RegistrationForm> {
 
       var request = http.MultipartRequest('POST', uri);
       request.fields['name'] = nameController.text;
+      request.fields['bkash_number'] = bkashAccountController.text;
+      request.fields['bkash_transaction_id'] =
+          bkashTransactionIdController.text;
       request.fields['phone_number'] = phoneController.text;
       request.fields['address'] = addressController.text;
       request.fields['district'] = districtController.text;
@@ -151,11 +156,14 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     buildTextField(districtController, 'District'),
                     buildTextField(nidController, 'NID/Birth Certificate No'),
                     buildTextField(birthDateController, 'Date of Birth'),
+                    buildTextField(bkashAccountController, 'Bkash Account No'),
+                    buildTextField(
+                        bkashTransactionIdController, 'Bkash Transaction ID'),
                     buildTextField(
                         areaController, 'Area (Local/Semi-Local/Overseas)'),
-                    buildTextField(categoryController,
-                        'Category (Batsman/Bowler/All-Rounder)'),
-                    buildTextField(specialityController, 'Speciality'),
+                    buildTextField(categoryController, 'Category (A/B/C)'),
+                    buildTextField(specialityController,
+                        'Speciality (Bowler/Batsman/All-Rounder)'),
                   ],
                 ),
               ),
