@@ -57,7 +57,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
   Future<void> submitForm() async {
     if (_formKey.currentState!.validate()) {
       final uri = Uri.parse(
-          'http://192.168.68.102:8000/register_user/'); // Your API endpoint
+          'https://backend.dplt10.org/register_user/'); // Your API endpoint
 
       var request = http.MultipartRequest('POST', uri);
       request.fields['name'] = nameController.text;

@@ -21,7 +21,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
 
   Future<void> fetchUserData() async {
     final uri = Uri.parse(
-        'http://192.168.68.102:8000/get_user_data/${widget.userId}/'); // Adjust with your endpoint
+        'https://backend.dplt10.org/get_user_data/${widget.userId}/'); // Adjust with your endpoint
 
     try {
       final response = await http.get(uri);
