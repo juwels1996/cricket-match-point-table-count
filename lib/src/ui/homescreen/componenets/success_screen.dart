@@ -111,7 +111,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                 children: [
                   Image.asset('assets/sponsors/dpl2.png',
                       height: 100, width: 100),
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
                   const Text(
                     "DPL - Deedar Premier League (Season-6)",
                     textAlign: TextAlign.center,
@@ -198,12 +198,13 @@ class _SuccessScreenState extends State<SuccessScreen> {
       spacing: 10,
       runSpacing: 10,
       children: [
-        CustomButton(text: "FB Page: DPL", onPressed: () {}),
+        CustomButton(
+            text: "FB Page: DPL -Deeder Premier League", onPressed: () {}),
         CustomButton(
             text: "dplt10.org",
             icon: "assets/sponsors/web_icon.png",
             onPressed: () {}),
-        CustomButton(text: "Fan Group", onPressed: () {}),
+        CustomButton(text: "Fan Group -DPL Fan Areana", onPressed: () {}),
       ],
     );
   }
