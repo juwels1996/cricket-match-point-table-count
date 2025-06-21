@@ -45,22 +45,24 @@ class _HoverButtonState extends State<HoverButton> {
             borderRadius: BorderRadius.circular(10),
             color: _buttonColor, // Set dynamic color
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(widget.icon,
-                  color: _iconTextColor, // Set dynamic color for the icon
-                  size: Responsive.isSmallScreen(context) ? 14 : 20),
-              // SizedBox(height: 8),
-              Text(
-                widget.title,
-                style: TextStyle(
-                  color: _iconTextColor, // Set dynamic color for the text
-                  fontSize: Responsive.isSmallScreen(context) ? 10 : 14,
-                  fontWeight: FontWeight.bold,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(widget.icon,
+                    color: _iconTextColor, // Set dynamic color for the icon
+                    size: Responsive.isSmallScreen(context) ? 14 : 20),
+                // SizedBox(height: 8),
+                Text(
+                  widget.title,
+                  style: TextStyle(
+                    color: _iconTextColor, // Set dynamic color for the text
+                    fontSize: Responsive.isSmallScreen(context) ? 10 : 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

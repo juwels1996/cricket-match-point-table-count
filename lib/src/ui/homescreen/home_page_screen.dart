@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         key: _scaffoldKey,
         drawer: BuildDrawer(context: context),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue.shade200,
         body: isLoading
             ? Center(
                 child: CircularProgressIndicator(),
@@ -96,6 +96,20 @@ class _HomePageState extends State<HomePage> {
                     AboutUsInformation(),
                     GuidelineWidget(),
                     ContactUsWidget(),
+
+                    //I want to add my developer team name here who build this website and add love emoji
+
+                    Center(
+                      child: Text(
+                        "Developed and maintained by Juwel Sheikh❤️",
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontFamily: 'Roboto',
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
 
                     // _buildSponsorBanner(),
                   ],

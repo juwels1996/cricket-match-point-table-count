@@ -113,7 +113,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                       height: 100, width: 100),
                   const SizedBox(height: 20),
                   const Text(
-                    "DPL - Deedar Premier League (Season-3)",
+                    "DPL - Deedar Premier League (Season-6)",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 24,
