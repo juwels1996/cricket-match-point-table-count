@@ -96,6 +96,16 @@ class _HomePageState extends State<HomePage> {
                     AboutUsInformation(),
                     GuidelineWidget(),
                     ContactUsWidget(),
+                    // Uncomment the following line to add the PDF List Screen
+                    Center(
+                      child: Text("App Version: 1.5.0",
+                          style: TextStyle(
+                            color: Colors.purple,
+                            fontFamily: 'Roboto',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ),
 
                     //I want to add my developer team name here who build this website and add love emoji
 
