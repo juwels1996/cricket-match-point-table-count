@@ -105,7 +105,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
           Container(color: Colors.black.withOpacity(0.35)),
           Center(
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -120,11 +120,11 @@ class _SuccessScreenState extends State<SuccessScreen> {
                         fontWeight: FontWeight.w600,
                         color: Colors.white),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 6),
                   Text("Congratulations",
                       style: GoogleFonts.dancingScript(
                           fontSize: 28, color: Colors.white)),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 6),
                   RichText(
                     text: const TextSpan(
                       style: TextStyle(
@@ -140,9 +140,9 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   _buildPlayerInfo(),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 8),
                   _buildLinks(),
                 ],
               ),
@@ -204,7 +204,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
             text: "dplt10.org",
             icon: "assets/sponsors/web_icon.png",
             onPressed: () {}),
-        CustomButton(text: "Fan Group -DPL Fan Areana", onPressed: () {}),
+        CustomButton(text: "Fan Group -DPL Fan Arena", onPressed: () {}),
       ],
     );
   }
