@@ -1,7 +1,6 @@
 import 'package:cricket_scorecard/src/ui/homescreen/componenets/about_us_widget.dart';
 import 'package:cricket_scorecard/src/ui/homescreen/componenets/contact_us_widget.dart';
 import 'package:cricket_scorecard/src/ui/homescreen/componenets/guideline_widget.dart';
-import 'package:cricket_scorecard/src/ui/homescreen/componenets/registration_form.dart';
 import 'package:cricket_scorecard/src/ui/matches_screen/matches_screen_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -79,51 +78,46 @@ class _HomePageState extends State<HomePage> {
         drawer: BuildDrawer(context: context),
         backgroundColor: Colors.blue.shade200,
         body: isLoading
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(),
-                    _buildHeroBanner(),
-                    _buildQuickLinks(context),
-                    _buildMagicMomentsSection(),
-                    EventRegistrationCards(),
-                    SponsorScreen(),
-                    TeamListScreen(),
-                    AboutUsInformation(),
-                    GuidelineWidget(),
-                    ContactUsWidget(),
-                    // Uncomment the following line to add the PDF List Screen
-                    Center(
-                      child: Text("App Version: 1.5.0",
+            ? Center(child: CircularProgressIndicator())
+            : CustomScrollView(
+                slivers: [
+                  SliverList(
+                    delegate: SliverChildListDelegate([
+                      _buildHeader(),
+                      _buildHeroBanner(),
+                      _buildQuickLinks(context),
+                      _buildMagicMomentsSection(),
+                      EventRegistrationCards(),
+                      SponsorScreen(),
+                      TeamListScreen(),
+                      AboutUsInformation(),
+                      GuidelineWidget(),
+                      ContactUsWidget(),
+                      Center(
+                        child: Text(
+                          "App Version: 1.6.0",
                           style: TextStyle(
                             color: Colors.purple,
                             fontFamily: 'Roboto',
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                          )),
-                    ),
-
-                    //I want to add my developer team name here who build this website and add love emoji
-
-                    Center(
-                      child: Text(
-                        "Developed and maintained by Juwel Sheikh❤️",
-                        style: TextStyle(
-                          color: Colors.black54,
-                          fontFamily: 'Roboto',
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-
-                    // _buildSponsorBanner(),
-                  ],
-                ),
+                      Center(
+                        child: Text(
+                          "Developed and maintained by Juwel Sheikh❤️",
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontFamily: 'Roboto',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ),
+                ],
               ),
       ),
     );

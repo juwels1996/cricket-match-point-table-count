@@ -9,22 +9,18 @@ class SponsorScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
-          // Title Sponsors Section
-          _buildSectionTitle("Official Broadcaster, Title Sponsor &  Partner"),
-          _buildSponsorRow(context, [
-            "assets/sponsors/sponsor_1.jpg",
-            "assets/sponsors/sponsor_2.png",
-            "assets/sponsors/sponsor_3.jpg",
-          ]),
+          // SizedBox(height: 20),
+          // // Title Sponsors Section
+          // _buildSectionTitle("Official Broadcaster, Title Sponsor &  Partner"),
+          // _buildSponsorRow(context, [
+          //   "assets/sponsors/sponsorss.jpeg",
+          // ]),
           SizedBox(height: 20),
 
           // Associate Partners Section
-          _buildSectionTitle("Associate Partners"),
+          _buildSectionTitle("Co-Media Sponsor"),
           _buildSponsorRow(context, [
-            "assets/sponsors/sponsor_1.jpg",
-            "assets/sponsors/sponsor_2.png",
-            "assets/sponsors/sponsor_3.jpg",
+            "assets/sponsors/sponsorss.jpeg",
           ]),
           SizedBox(height: 20),
 
