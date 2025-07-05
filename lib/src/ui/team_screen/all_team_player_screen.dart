@@ -41,7 +41,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
           color: Colors.white,
           icon: Icon(Icons.arrow_back),
         ),
-        title: Text("TEAMS",
+        title: Text("TEAMSrtfbyveht9uo8gyiit",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.black,
         centerTitle: true,

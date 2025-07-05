@@ -38,10 +38,6 @@ class _VideoListScreenState extends State<VideoListScreen> {
     }
   }
 
-  void _initializePlayer(String videoUrl) {
-    player.open(Media(videoUrl));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

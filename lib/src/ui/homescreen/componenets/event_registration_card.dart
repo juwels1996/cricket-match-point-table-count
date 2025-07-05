@@ -8,13 +8,13 @@ class EventRegistrationCards extends StatelessWidget {
       color: Colors.black,
       child: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  RegistrationForm(), // Navigate to RegistrationForm
-            ),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) =>
+          //         RegistrationForm(), // Navigate to RegistrationForm
+          //   ),
+          // );
         },
         child: Card(
           shape: RoundedRectangleBorder(
@@ -69,12 +69,20 @@ class EventRegistrationCards extends StatelessWidget {
                   color: Colors.white, // Icon color
                 ),
                 SizedBox(height: 20),
+                // Text(
+                //   "Register for the Upcoming DPL Season 06",
+                //   style: TextStyle(
+                //     fontSize: 24,
+                //     fontWeight: FontWeight.bold,
+                //     color: Colors.white, // Text color
+                //   ),
+                //   textAlign: TextAlign.center,
+                // ),
                 Text(
-                  "Register for the Upcoming DPL Season 06",
+                  "Event registraion is closed for DPL Season 06",
                   style: TextStyle(
                     fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white, // Text color
+                    color: Colors.white.withOpacity(0.8), // Lighter text color
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -87,16 +95,18 @@ class EventRegistrationCards extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
+
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RegistrationForm(),
-                      ),
-                    );
-                  },
+                  onPressed: null,
+                  // onPressed: () {
+                  //   Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (context) => RegistrationForm(),
+                  //     ),
+                  //   );
+                  // },
                   child: Text(
                     "Register Now",
                     style: TextStyle(fontSize: 16),
