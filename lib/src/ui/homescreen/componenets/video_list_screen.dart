@@ -41,7 +41,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.blueGrey[900],
       appBar: AppBar(title: Text("Magic Moments - All Videos")),
       body: ListView.builder(
         scrollDirection: Axis.vertical,
@@ -64,7 +64,9 @@ class _VideoListScreenState extends State<VideoListScreen> {
                     views: "",
                     duration: "",
                   ),
-                  Divider(),
+                  Divider(
+                    color: Colors.grey,
+                  ),
                 ],
               ));
         },

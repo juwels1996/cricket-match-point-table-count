@@ -38,8 +38,15 @@ class _HighlightCardState extends State<HighlightCard> {
               : MediaQuery.of(context).size.width * 0.25,
       margin: EdgeInsets.only(right: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10),
+        color: Colors.teal.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.green.withOpacity(0.2),
+            blurRadius: 10,
+            offset: Offset(0, 4), // changes position of shadow
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,8 +134,15 @@ class _HighlightCard1State extends State<HighlightCard1> {
               : MediaQuery.of(context).size.width * 0.25,
       margin: EdgeInsets.only(right: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.blue.withOpacity(0.1),
         borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blue.withOpacity(0.2),
+            blurRadius: 10,
+            offset: Offset(0, 4), // changes position of shadow
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

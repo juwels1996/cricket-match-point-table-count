@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildMagicMomentsSection() {
     return Container(
-      color: Colors.black,
+      color: Colors.blue.shade400,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         child: Column(
@@ -167,6 +167,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
+            SizedBox(height: 10),
             Container(
               height: 220,
               child: ListView.builder(
