@@ -1,10 +1,8 @@
-import 'package:cricket_scorecard/src/ui/homescreen/componenets/about_us_widget.dart';
-import 'package:cricket_scorecard/src/ui/homescreen/componenets/contact_us_widget.dart';
-import 'package:cricket_scorecard/src/ui/homescreen/componenets/guideline_widget.dart';
+import 'package:cricket_scorecard/src/ui/homescreen/componenets/video_list_screen.dart';
 import 'package:cricket_scorecard/src/ui/matches_screen/matches_screen_page.dart';
+import 'package:cricket_scorecard/src/ui/news/news_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import '../../utils/responsives_classes.dart';
@@ -14,12 +12,8 @@ import '../point_table/point_table_screen.dart';
 import '../team_screen/all_team_player_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../widgets/button/hoverbutton.dart';
 import '../widgets/highlight_card.dart';
 import 'componenets/build_sponsor_widget.dart';
-import 'componenets/event_registration_card.dart';
-import 'componenets/team_list_widget.dart';
-import 'componenets/video_list_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -76,7 +70,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         key: _scaffoldKey,
         drawer: BuildDrawer(context: context),
-        backgroundColor: Colors.blue.shade200,
+        backgroundColor: Colors.white,
         body: isLoading
             ? Center(child: CircularProgressIndicator())
             : CustomScrollView(
@@ -87,34 +81,63 @@ class _HomePageState extends State<HomePage> {
                       _buildHeroBanner(),
                       _buildQuickLinks(context),
                       _buildMagicMomentsSection(),
-                      EventRegistrationCards(),
+                      // EventRegistrationCards(),
+
+                      Text(
+                        "Official Broadcaster, Title Sponsor & Partner",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
                       SponsorScreen(),
-                      TeamListScreen(),
-                      AboutUsInformation(),
-                      GuidelineWidget(),
-                      ContactUsWidget(),
-                      Center(
-                        child: Text(
-                          "App Version: 1.6.0",
-                          style: TextStyle(
-                            color: Colors.purple,
-                            fontFamily: 'Roboto',
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      Container(
+                        color: Color(0xff213894),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Image.asset(
+                              'assets/sponsors/la.png',
+                              fit: BoxFit.cover,
+                              height: 80,
+                              width: 100,
+                            ),
+                            Image.asset(
+                              'assets/sponsors/la.png',
+                              fit: BoxFit.cover,
+                              height: 80,
+                              width: 100,
+                            ),
+                          ],
                         ),
-                      ),
-                      Center(
-                        child: Text(
-                          "Developed and maintained by Juwel Sheikh❤️",
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontFamily: 'Roboto',
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                      )
+                      // TeamListScreen(),
+                      // AboutUsInformation(),
+                      // GuidelineWidget(),
+                      // ContactUsWidget(),
+                      // Center(
+                      //   child: Text(
+                      //     "App Version: 1.6.0",
+                      //     style: TextStyle(
+                      //       color: Colors.purple,
+                      //       fontFamily: 'Roboto',
+                      //       fontSize: 14,
+                      //       fontWeight: FontWeight.bold,
+                      //     ),
+                      //   ),
+                      // ),
+                      // Center(
+                      //   child: Text(
+                      //     "Developed and maintained by Juwel Sheikh❤️",
+                      //     style: TextStyle(
+                      //       color: Colors.black54,
+                      //       fontFamily: 'Roboto',
+                      //       fontSize: 14,
+                      //       fontWeight: FontWeight.bold,
+                      //     ),
+                      //   ),
+                      // ),
                     ]),
                   ),
                 ],
@@ -128,133 +151,216 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildMagicMomentsSection() {
-    return Container(
-      color: Colors.blue.shade400,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Magic Moments",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => VideoListScreen(),
-                      ),
-                    );
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    backgroundColor: Colors.white.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  child: Text("View All"),
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Container(
-              height: 220,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: videos.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () => _initializePlayer(videos[index]['video_link']),
-                    child: HighlightCard(
-                      title: videos[index]['title'],
-                      imageUrl: videos[index]['thumbnail_url'],
-                      date: videos[index]['created_at'],
-                      views: videos[index]['video_link'],
-                      duration: "05:14 mins",
-                    ),
-                  );
-                },
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              "Magic Moments",
+              style: TextStyle(
+                color: Colors.indigo.shade900,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ],
-        ),
+          ),
+          SizedBox(height: 20),
+          SizedBox(
+            height: 200,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: videos.length,
+              itemBuilder: (context, index) {
+                return HighlightCard(
+                  title: videos[index]['title'],
+                  imageUrl: videos[index]['thumbnail_url'],
+                  date: videos[index]['created_at'],
+                  duration: "05:14 mins",
+                  views: videos[index]['video_link'],
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
   // Header Section - IPL Logo, Search, Poll, Choice
   Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-      color: Colors.blue.shade900,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            onPressed: _openDrawer,
-            icon: Icon(Icons.menu),
-            color: Colors.white,
-          ),
-          Image.asset("assets/sponsors/dpl2.png", height: 60.h),
-          // Row(
-          //   children: [
-          //     _iconButton(Icons.bar_chart, "Fan Poll"),
-          //     SizedBox(width: 10),
-          //     _iconButton(Icons.emoji_events, "Viewers Choice"),
-          //     SizedBox(width: 10),
-          //     Icon(Icons.search, color: Colors.white, size: 30),
-          //   ],
-          // ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.blue.shade900,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          children: [
+            IconButton(
+              onPressed: _openDrawer,
+              icon: Icon(Icons.menu, color: Colors.white),
+            ),
+            SizedBox(width: 12),
+            Image.asset(
+              "assets/sponsors/dpl2.png",
+              height: 40,
+            ),
+            Spacer(),
+            // Navigation menu items
+            Row(
+              children: [
+                GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MatchesScreen()));
+                    },
+                    child: _navItem("Matches")),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PointsTableScreen()));
+                  },
+                  child: _navItem("Point Table"),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => VideoListScreen()));
+                  },
+                  child: _navItem("Videos"),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => TeamsScreen()));
+                  },
+                  child: _navItem("Teams"),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PDFListScreen()));
+                  },
+                  child: _navItem("Code of Conduct"),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _navItem(String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }
 
   // Hero Section with Video Player
   Widget _buildHeroBanner() {
-    String youtubeUrl = videos.isNotEmpty
-        ? videos[0]['video_link']
-        : ""; // Grab the first video URL
-
     return Stack(
-      alignment: Alignment.center,
       children: [
         Image.asset(
-          width: MediaQuery.of(context).size.width * 0.5,
-          "assets/sponsors/hero_banner.png", // Your image asset
-          height: 160,
+          "assets/sponsors/background_cover.png",
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height * 0.6,
+          fit: BoxFit.fill,
         ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: Responsive.isSmallScreen(context)
-                  ? MediaQuery.of(context).size.width
-                  : MediaQuery.of(context).size.width,
-              height: Responsive.isSmallScreen(context)
-                  ? MediaQuery.of(context).size.width * 9.0 / 16.0
-                  : MediaQuery.of(context).size.width * 9.0 / 26.0,
-              // Use [Video] widget to display video output.
-              child: Video(controller: controller),
-            ),
-          ],
+        Positioned(
+          left: 16,
+          bottom: 40,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Learnings, ambitions and\nconquering dreams with\nDPL",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                "4 June, 2024 | 01.28min",
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                ),
+              ),
+              SizedBox(height: 8),
+              SizedBox(
+                width: Responsive.isSmallScreen(context)
+                    ? MediaQuery.of(context).size.width
+                    : MediaQuery.of(context).size.width,
+                height: Responsive.isSmallScreen(context)
+                    ? MediaQuery.of(context).size.width * 9.0 / 16.0
+                    : MediaQuery.of(context).size.width * 9.0 / 26.0,
+                // Use [Video] widget to display video output.
+                child: Video(controller: controller),
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  // YouTube Video Carousel
+  // Widget _buildHeroBanner() {
+  //   String youtubeUrl = videos.isNotEmpty
+  //       ? videos[0]['video_link']
+  //       : ""; // Grab the first video URL
+  //
+  //   return Stack(
+  //     alignment: Alignment.center,
+  //     children: [
+  //       Image.asset(
+  //         "assets/sponsors/background_cover.png",
+  //         width: double.infinity,
+  //         height: MediaQuery.of(context).size.height * 0.6,
+  //         fit: BoxFit.fill,
+  //       ),
+  //       Column(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           SizedBox(
+  //             width: Responsive.isSmallScreen(context)
+  //                 ? MediaQuery.of(context).size.width
+  //                 : MediaQuery.of(context).size.width,
+  //             height: Responsive.isSmallScreen(context)
+  //                 ? MediaQuery.of(context).size.width * 9.0 / 16.0
+  //                 : MediaQuery.of(context).size.width * 9.0 / 26.0,
+  //             // Use [Video] widget to display video output.
+  //             child: Video(controller: controller),
+  //           ),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
+
+// YouTube Video Carousel
   // Widget _buildYouTubeVideoCarousel() {
   //   return CarouselSlider(
   //     items: videos.map((video) {
@@ -298,13 +404,13 @@ Widget _buildQuickLinks(BuildContext context) {
     margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     padding: EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: Colors.white, // White Background
-      borderRadius: BorderRadius.circular(12),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
       border: Border.all(color: Colors.black12),
       boxShadow: [
         BoxShadow(
           color: Colors.black12,
-          blurRadius: 4,
+          blurRadius: 6,
           spreadRadius: 1,
         ),
       ],
@@ -312,30 +418,24 @@ Widget _buildQuickLinks(BuildContext context) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// ✅ **Title Header**
         Text(
-          "What Are You Looking For?",
+          "What are you Looking For?",
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
+            color: Colors.indigo.shade900,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 12),
-
-        /// ✅ **Grid Layout for Quick Links**
+        SizedBox(height: 16),
         GridView.count(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
-          crossAxisCount: Responsive.isLargeScreen(context)
-              ? 4
-              : 2, // Adjust column count based on screen size
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio:
-              Responsive.isLargeScreen(context) ? 3.5 : 4, // Adjust item size
+          crossAxisCount: Responsive.isLargeScreen(context) ? 4 : 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 3,
           children: [
-            _quickLinkButton("Fixtures & Res..", Icons.calendar_today, () {
+            _quickLinkButton("Fixtures & Reserch", Icons.calendar_today, () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => MatchesScreen()));
             }),
@@ -361,11 +461,31 @@ Widget _buildQuickLinks(BuildContext context) {
 }
 
 /// ✅ **Quick Link Button with Hover & Click Effects**
-Widget _quickLinkButton(String title, IconData icon, Function onTap) {
-  return HoverButton(
-    title: title,
-    icon: icon,
+Widget _quickLinkButton(String title, IconData icon, VoidCallback onTap) {
+  return InkWell(
     onTap: onTap,
+    child: Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.blue.shade100),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: Colors.deepOrange),
+          Text(
+            title,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    ),
   );
 }
 

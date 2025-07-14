@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
-class HighlightCard extends StatefulWidget {
+class HighlightCard extends StatelessWidget {
   final String title;
   final String imageUrl;
   final String date;
-  double? height;
-  double? width;
+  final double? height;
+  final double? width;
   final String views;
   final String duration;
 
-  HighlightCard({
+  const HighlightCard({
     Key? key,
     required this.title,
     required this.imageUrl,
@@ -24,72 +24,55 @@ class HighlightCard extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _HighlightCardState createState() => _HighlightCardState();
-}
-
-class _HighlightCardState extends State<HighlightCard> {
-  @override
   Widget build(BuildContext context) {
     return Container(
       width: Responsive.isSmallScreen(context)
-          ? 150
+          ? 180
           : Responsive.isMediumScreen(context)
               ? 200
-              : MediaQuery.of(context).size.width * 0.25,
+              : MediaQuery.of(context).size.width * 0.22,
       margin: EdgeInsets.only(right: 12),
-      decoration: BoxDecoration(
-        color: Colors.teal.withOpacity(0.6),
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.green.withOpacity(0.2),
-            blurRadius: 10,
-            offset: Offset(0, 4), // changes position of shadow
-          ),
-        ],
-      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(height: 10),
-
-          /// ✅ **Image with Rounded Corners**
+          /// 🔵 Image with top-rounded corners
           ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10),
-              topRight: Radius.circular(10),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             child: Image.network(
-              widget.imageUrl,
-              height: MediaQuery.of(context).size.height * 0.15,
+              imageUrl,
+              height: 120,
               width: double.infinity,
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(8),
+
+          /// 🔵 Bottom blue section
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.indigo.shade900,
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+            ),
+            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// ✅ **Title**
                 Text(
-                  widget.title,
+                  title,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 12,
                     fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                  maxLines: 1,
+                ),
+                SizedBox(height: 4),
+                Text(
+                  DateFormat('dd MMM, yyyy').format(DateTime.parse(date)),
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 11,
                   ),
                 ),
-                SizedBox(height: 5),
-                Text(
-                  DateFormat('dd MMM yyyy').format(DateTime.parse(widget.date)),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                  ),
-                )
-
-                /// ✅ **Date, Views & Duration Row**
               ],
             ),
           ),

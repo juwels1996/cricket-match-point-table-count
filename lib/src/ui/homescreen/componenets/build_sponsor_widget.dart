@@ -1,82 +1,84 @@
-import 'package:cricket_scorecard/src/utils/responsives_classes.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-class SponsorScreen extends StatelessWidget {
+import '../../../core/model/sponsor_model.dart';
+// make sure the path is correct
+
+class SponsorScreen extends StatefulWidget {
+  @override
+  _SponsorScreenState createState() => _SponsorScreenState();
+}
+
+class _SponsorScreenState extends State<SponsorScreen> {
+  List<SponsorModel> sponsors = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchSponsors();
+  }
+
+  Future<void> fetchSponsors() async {
+    // try {
+    final response =
+        await http.get(Uri.parse("http://192.168.68.103:8000/api/sponsor/"));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      setState(() {
+        sponsors = data.map((item) => SponsorModel.fromJson(item)).toList();
+      });
+    } else {
+      print('Failed to load sponsors: ${response.statusCode}');
+    }
+    // } catch (e) {
+    //   print('Error: $e');
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Color(0xFF1E2A48),
+      padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // SizedBox(height: 20),
-          // // Title Sponsors Section
-          // _buildSectionTitle("Official Broadcaster, Title Sponsor &  Partner"),
-          // _buildSponsorRow(context, [
-          //   "assets/sponsors/sponsorss.jpeg",
-          // ]),
           SizedBox(height: 20),
-
-          // Associate Partners Section
-          _buildSectionTitle("Co-Media Sponsor"),
-          _buildSponsorRow(context, [
-            "assets/sponsors/sponsorss.jpeg",
-          ]),
-          SizedBox(height: 20),
-
-          // Official Partners Section
-          // _buildSectionTitle(
-          //     "Official Umpire Partner & Official Strategic Timeout Partner"),
-          // _buildSponsorRow([
-          //   "assets/sponsors/ipl.jpg",
-          //   "assets/sponsors/tata.jpeg",
-          //   "assets/sponsors/ipl.jpg",
-          // ]
-          // ),
+          sponsors.isEmpty
+              ? CircularProgressIndicator()
+              : Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 20,
+                  runSpacing: 10,
+                  children: sponsors.map((sponsor) {
+                    return SizedBox(
+                      height: 100,
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image.network(
+                              "http://192.168.68.103:8000${sponsor.image}",
+                              height: 70,
+                              width: 70,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(Icons.broken_image, color: Colors.white),
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          // Text(
+                          //   sponsor.title,
+                          //   style: TextStyle(color: Colors.white),
+                          // ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
         ],
       ),
-    );
-  }
-
-  // Function to create the title for each section
-  Widget _buildSectionTitle(String title) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: Text(
-            title,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              color: Colors.white70,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Function to build the row of sponsors
-  Widget _buildSponsorRow(BuildContext context, List<String> images) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: images.map((image) {
-        return Expanded(
-          child: Container(
-            padding: EdgeInsets.all(8),
-            child: Image.asset(
-              image,
-              height: Responsive.isSmallScreen(context) ? 70 : 120,
-              width: Responsive.isSmallScreen(context)
-                  ? 70
-                  : 120, // Image size adjusted
-            ),
-          ),
-        );
-      }).toList(),
     );
   }
 }
