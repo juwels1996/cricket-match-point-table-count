@@ -41,13 +41,12 @@ class _AdviserScreenState extends State<AdviserScreen> {
       body: GridView.builder(
         padding: EdgeInsets.all(10),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: _getColumns(context), // Use responsive column count
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: Responsive.isLargeScreen(context)
-              ? 1.2
-              : 0.9, // Adjust aspect ratio based on screen size
-        ),
+            crossAxisCount: _getColumns(context), // Use responsive column count
+            crossAxisSpacing: 2,
+            mainAxisSpacing: 2,
+            childAspectRatio: 0.4
+            // Adjust aspect ratio based on screen size
+            ),
         itemCount: advisers.length,
         itemBuilder: (context, index) {
           return Card(
@@ -58,12 +57,12 @@ class _AdviserScreenState extends State<AdviserScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
+                  borderRadius: BorderRadius.circular(25),
                   child: Image.network(
                     advisers[index]['image_url']!,
-                    height: 100,
-                    width: 100,
                     fit: BoxFit.cover,
+                    height: MediaQuery.of(context).size.height * 0.16,
+                    width: MediaQuery.of(context).size.height * 0.2,
                   ),
                 ),
                 Padding(

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import '../../utils/responsives_classes.dart';
+import '../gallery_screen/gallery_screen.dart';
 import '../home_drawer/home_drawer_screen.dart';
 import '../over-stat/overall_stats_screen.dart';
 import '../point_table/point_table_screen.dart';
@@ -251,9 +252,9 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => PDFListScreen()));
+                            builder: (context) => MatchGalleryScreen()));
                   },
-                  child: _navItem("Code of Conduct"),
+                  child: _navItem("Gallery"),
                 ),
               ],
             ),

@@ -137,38 +137,69 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
 
   /// Build individual cards
   Widget _buildCard(Map<String, dynamic> item) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      elevation: 3,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (item['image_url'] != null && item['image_url'].isNotEmpty)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                item['image_url'],
-                height: 80.h,
-                width: 70,
-                fit: BoxFit.cover,
-              ),
-            )
-          else
-            Icon(Icons.person, size: 60.sp, color: Colors.grey),
-          SizedBox(height: 5),
-          Text(
-            item['name'],
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
+    return Container(
+      width: 140, // Fixed width to maintain consistent card size
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(2, 2),
           ),
-          if (item.containsKey('role'))
-            Text(
-              item['role'] ?? 'Role not available',
-              style: TextStyle(color: Colors.grey, fontSize: 10),
-            ),
         ],
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+              child: AspectRatio(
+                aspectRatio: Responsive.isLargeScreen(context)
+                    ? 8 / 4
+                    : 6 / 4, // Taller image ratio
+                child: item['image_url'] != null && item['image_url'].isNotEmpty
+                    ? Image.network(
+                        item['image_url'],
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) =>
+                            Image.asset('assets/images/default_avatar.png'),
+                      )
+                    : Image.asset('assets/images/default_avatar.png'),
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 6.0, horizontal: 4.0),
+              child: Column(
+                children: [
+                  Text(
+                    item['name'] ?? 'No Name',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    item['role'] ?? '',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
