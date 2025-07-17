@@ -587,7 +587,7 @@ Widget _buildQuickLinks(BuildContext context) {
           mainAxisSpacing: 16,
           childAspectRatio: 3,
           children: [
-            _quickLinkButton("Fixtures & Reserch", Icons.calendar_today, () {
+            _quickLinkButton("Fixtures", Icons.calendar_today, () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => MatchesScreen()));
             }),
