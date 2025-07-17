@@ -9,121 +9,141 @@ class MatchesScreen extends StatefulWidget {
 
 class _MatchesScreenState extends State<MatchesScreen> {
   List matches = [];
+  bool isLoading = true; // ✅ Add this line
 
-  // Fetch matches data from the backend
   Future<void> fetchMatches() async {
-    final response =
-        await http.get(Uri.parse("https://backend.dplt10.org/api/matches/"));
-    if (response.statusCode == 200) {
-      print("Matches response--------: ${response.body}");
-      setState(() {
-        matches = jsonDecode(response.body);
+    try {
+      final response =
+          await http.get(Uri.parse("https://backend.dplt10.org/api/matches/"));
+      print("Response body: '${response.body}'");
 
-        // Sort matches by date
-        matches.sort((a, b) {
-          DateTime dateA = DateTime.parse(a['date']);
-          DateTime dateB = DateTime.parse(b['date']);
-          return dateA.compareTo(dateB); // Ascending order
+      if (response.statusCode == 200) {
+        if (response.body.trim().isEmpty) {
+          setState(() {
+            matches = [];
+            isLoading = false;
+          });
+          return;
+        }
+
+        final decoded = jsonDecode(response.body);
+
+        // If decoded is not a list, safely handle it
+        if (decoded is List) {
+          setState(() {
+            matches = decoded;
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            matches = [];
+            isLoading = false;
+          });
+          print("Expected a list, got: $decoded");
+        }
+      } else {
+        setState(() {
+          isLoading = false;
         });
+        print("Server error: ${response.statusCode}");
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
       });
+      print("Exception while fetching matches: $e");
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchMatches();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(centerTitle: true, title: Text("Matches")),
-        body: matches.isEmpty
-            ? Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                itemCount: matches.length,
-                itemBuilder: (context, index) {
-                  final match = matches[index];
-                  final team1Name = match['team1_name'] ??
-                      'Team 1'; // Now using team1_name from the response
-                  final team2Name = match['team2_name'] ??
-                      'Team 2'; // Now using team2_name from the response
+      appBar: AppBar(centerTitle: true, title: Text("Matches")),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : matches.isEmpty
+              ? Center(
+                  child: Text(
+                    "There is no match played still now...",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: matches.length,
+                  itemBuilder: (context, index) {
+                    final match = matches[index];
+                    final team1Name = match['team1_name'] ?? 'Team 1';
+                    final team2Name = match['team2_name'] ?? 'Team 2';
+                    final date = match['date'] ?? 'Date not available';
+                    final status = match['status'] ?? 'upcoming';
+                    final winnerName = match['winner_name'] ?? 'N/A';
+                    final result = match['result'] ?? 'No result';
 
-                  final date = match['date'] ?? 'Date not available';
-                  final status = match['status'] ?? 'upcoming';
-                  final winnerName = match['winner_name'] ?? 'N/A';
-                  final result = match['result'] ?? 'No result';
-
-                  if (status == 'upcoming') {
-                    // Handle upcoming match display
-                    return Card(
-                      color: Colors.white,
-                      child: ListTile(
-                        title: Text(
-                          textAlign: TextAlign.center,
-                          "$team1Name vs $team2Name",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 13),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text("Date: $date"),
-                            Text(
-                              "Time: ${match['time']}",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w300, fontSize: 12),
-                            ),
-                            Text(
-                              "Stadium: ${match['stadium']}",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  } else if (status == 'finished') {
-                    // Handle finished match display
-                    return Card(
-                      color: Colors.white,
-                      child: ListTile(
-                        title: Text(
-                          textAlign: TextAlign.center,
-                          "$team1Name vs $team2Name",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 13),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Winner: $winnerName",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500, fontSize: 12),
-                            ),
-                            Text(
-                              "Result: $result",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w400, fontSize: 12),
-                            ),
-                            Text("Date: $date",
+                    if (status == 'upcoming') {
+                      return Card(
+                        color: Colors.white,
+                        child: ListTile(
+                          title: Text(
+                            "$team1Name vs $team2Name",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 13),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("Date: $date"),
+                              Text(
+                                "Time: ${match['time']}",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w300, fontSize: 12)),
-                          ],
+                                    fontWeight: FontWeight.w300, fontSize: 12),
+                              ),
+                              Text(
+                                "Stadium: ${match['stadium']}",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 12),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  }
+                      );
+                    } else if (status == 'finished') {
+                      return Card(
+                        color: Colors.white,
+                        child: ListTile(
+                          title: Text(
+                            "$team1Name vs $team2Name",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 13),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Winner: $winnerName",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500, fontSize: 12),
+                              ),
+                              Text(
+                                "Result: $result",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w400, fontSize: 12),
+                              ),
+                              Text(
+                                "Date: $date",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w300, fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
 
-                  return Container(); // Return empty container if the status is unknown
-                },
-              ));
-  }
-
-  String _formatDate(String date) {
-    DateTime dateTime = DateTime.parse(date);
-    return "${dateTime.day}-${dateTime.month}-${dateTime.year}";
+                    return Container(); // Unknown status
+                  },
+                ),
+    );
   }
 }

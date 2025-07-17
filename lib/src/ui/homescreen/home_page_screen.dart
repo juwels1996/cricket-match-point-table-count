@@ -133,9 +133,24 @@ class _HomePageState extends State<HomePage> {
                                       }
                                     },
                                 ),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Image.asset(
+                                    "assets/sponsors/la.png",
+                                    height: 70,
+                                  ),
+                                  Image.asset(
+                                    "assets/sponsors/la.png",
+                                    height: 70,
+                                  )
+                                ],
                               )
                             ],
                           )),
+
                       // Container(
                       //   color: Color(0xff213894),
                       //   child: Row(
@@ -234,6 +249,8 @@ class _HomePageState extends State<HomePage> {
 
   // Header Section - IPL Logo, Search, Poll, Choice
   Widget _buildHeader() {
+    final isMobile = Responsive.isSmallScreen(context);
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -242,79 +259,31 @@ class _HomePageState extends State<HomePage> {
           color: Colors.blue.shade900,
           borderRadius: BorderRadius.circular(30),
         ),
-        child: Responsive.isSmallScreen(context)
-            ? Row(
-                children: [
-                  IconButton(
-                    onPressed: _openDrawer,
-                    icon: Icon(Icons.menu, color: Colors.white),
-                  ),
-                  SizedBox(width: 12),
-                  Image.asset(
-                    "assets/sponsors/dpl2.png",
-                    height: 40,
-                  ),
-                  Text(
-                    "Deedar Premier League",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontStyle: FontStyle.italic,
-                        color: Colors.white),
-                  ),
-                  Spacer(),
-                  // Navigation menu items
-                  Row(
-                    children: [
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MatchesScreen()));
-                          },
-                          child: _navItem("Matches")),
-                      // GestureDetector(
-                      //   onTap: () {
-                      //     Navigator.push(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //             builder: (context) => PointsTableScreen()));
-                      //   },
-                      //   child: _navItem("Point Table"),
-                      // ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MatchGalleryScreen()));
-                        },
-                        child: _navItem("Gallery"),
-                      ),
-                    ],
-                  ),
-                ],
-              )
-            : Row(
-                children: [
-                  IconButton(
-                    onPressed: _openDrawer,
-                    icon: Icon(Icons.menu, color: Colors.white),
-                  ),
-                  SizedBox(width: 12),
-                  Image.asset(
-                    "assets/sponsors/dpl2.png",
-                    height: 40,
-                  ),
-                  Text(
-                    "Deedar Premier League",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontStyle: FontStyle.italic,
-                        color: Colors.white),
-                  ),
-                  Spacer(),
-                  // Navigation menu items
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header Row
+            Row(
+              children: [
+                IconButton(
+                  onPressed: _openDrawer,
+                  icon: Icon(Icons.menu, color: Colors.white),
+                ),
+                SizedBox(width: 12),
+                Image.asset(
+                  "assets/sponsors/dpl2.png",
+                  height: 40,
+                ),
+                SizedBox(width: 8),
+                Text(
+                  "Deedar Premier League",
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.white),
+                ),
+                Spacer(),
+                if (!isMobile)
                   Row(
                     children: [
                       GestureDetector(
@@ -363,8 +332,54 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                ],
-              ),
+              ],
+            ),
+
+            // Show menu below for mobile
+            if (isMobile)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MatchesScreen()));
+                        },
+                        child: _navItem("Matches")),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PointsTableScreen()));
+                      },
+                      child: _navItem("Point Table"),
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MatchGalleryScreen()));
+                        },
+                        child: _navItem("Gallery")),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => VideoListScreen()));
+                        },
+                        child: _navItem("Videos")),
+                  ],
+                ),
+              )
+          ],
+        ),
       ),
     );
   }
