@@ -74,7 +74,10 @@ class _SponsorScreenState extends State<SponsorScreen> {
                 children: sortedCategories.map((category) {
                   final sponsors = sponsorsByCategory[category];
                   final imageUrl = sponsors != null && sponsors.isNotEmpty
-                      ? sponsors.first.image
+                      ? (sponsors.first.image.startsWith('http')
+                          ? sponsors.first.image
+                              .replaceFirst('http://', 'https://')
+                          : 'https://backend.dplt10.org${sponsors.first.image}')
                       : null;
 
                   return GestureDetector(
