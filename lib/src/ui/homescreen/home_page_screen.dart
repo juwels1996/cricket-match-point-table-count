@@ -1,10 +1,12 @@
 import 'package:cricket_scorecard/src/ui/homescreen/componenets/video_list_screen.dart';
 import 'package:cricket_scorecard/src/ui/matches_screen/matches_screen_page.dart';
 import 'package:cricket_scorecard/src/ui/news/news_screen.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../utils/responsives_classes.dart';
 import '../gallery_screen/gallery_screen.dart';
 import '../home_drawer/home_drawer_screen.dart';
@@ -54,9 +56,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Initialize the YouTube Player with the first video URL
-  void _initializePlayer(String videoUrl) {
-    player.open(Media(videoUrl));
+  void _initializePlayer(String videoUrl) async {
+    await player.open(Media(videoUrl), play: false); // Don't auto play
   }
 
   @override
@@ -92,27 +93,69 @@ class _HomePageState extends State<HomePage> {
                           fontSize: 14,
                         ),
                       ),
-                      SponsorScreen(),
                       Container(
-                        color: Color(0xff213894),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Image.asset(
-                              'assets/sponsors/la.png',
-                              fit: BoxFit.cover,
-                              height: 80,
-                              width: 100,
-                            ),
-                            Image.asset(
-                              'assets/sponsors/la.png',
-                              fit: BoxFit.cover,
-                              height: 80,
-                              width: 100,
-                            ),
-                          ],
-                        ),
-                      )
+                          height: 400,
+                          width: double.infinity,
+                          color: Color(0xFF1E2A48),
+                          child: Column(
+                            children: [
+                              SponsorScreen(),
+                              Text(
+                                "Contact With Us",
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.white),
+                              ),
+                              Text(
+                                "Phone: 01812-557248",
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white),
+                              ),
+                              Text(
+                                "Email: dplcrickett10@gmail.com",
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white),
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  text: 'FB Page: DPL - Deedar Premier League',
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () async {
+                                      final Uri url = Uri.parse(
+                                          'https://www.facebook.com/profile.php?id=61566986897071');
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(url,
+                                            mode:
+                                                LaunchMode.externalApplication);
+                                      }
+                                    },
+                                ),
+                              )
+                            ],
+                          )),
+                      // Container(
+                      //   color: Color(0xff213894),
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Image.asset(
+                      //         'assets/sponsors/la.png',
+                      //         fit: BoxFit.cover,
+                      //         height: 80,
+                      //         width: 100,
+                      //       ),
+                      //       Image.asset(
+                      //         'assets/sponsors/la.png',
+                      //         fit: BoxFit.cover,
+                      //         height: 80,
+                      //         width: 100,
+                      //       ),
+                      //     ],
+                      //   ),
+                      // )
                       // TeamListScreen(),
                       // AboutUsInformation(),
                       // GuidelineWidget(),
@@ -199,67 +242,129 @@ class _HomePageState extends State<HomePage> {
           color: Colors.blue.shade900,
           borderRadius: BorderRadius.circular(30),
         ),
-        child: Row(
-          children: [
-            IconButton(
-              onPressed: _openDrawer,
-              icon: Icon(Icons.menu, color: Colors.white),
-            ),
-            SizedBox(width: 12),
-            Image.asset(
-              "assets/sponsors/dpl2.png",
-              height: 40,
-            ),
-            Spacer(),
-            // Navigation menu items
-            Row(
-              children: [
-                GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MatchesScreen()));
-                    },
-                    child: _navItem("Matches")),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PointsTableScreen()));
-                  },
-                  child: _navItem("Point Table"),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => VideoListScreen()));
-                  },
-                  child: _navItem("Videos"),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => TeamsScreen()));
-                  },
-                  child: _navItem("Teams"),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MatchGalleryScreen()));
-                  },
-                  child: _navItem("Gallery"),
-                ),
-              ],
-            ),
-          ],
-        ),
+        child: Responsive.isSmallScreen(context)
+            ? Row(
+                children: [
+                  IconButton(
+                    onPressed: _openDrawer,
+                    icon: Icon(Icons.menu, color: Colors.white),
+                  ),
+                  SizedBox(width: 12),
+                  Image.asset(
+                    "assets/sponsors/dpl2.png",
+                    height: 40,
+                  ),
+                  Text(
+                    "Deedar Premier League",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.white),
+                  ),
+                  Spacer(),
+                  // Navigation menu items
+                  Row(
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MatchesScreen()));
+                          },
+                          child: _navItem("Matches")),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (context) => PointsTableScreen()));
+                      //   },
+                      //   child: _navItem("Point Table"),
+                      // ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MatchGalleryScreen()));
+                        },
+                        child: _navItem("Gallery"),
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            : Row(
+                children: [
+                  IconButton(
+                    onPressed: _openDrawer,
+                    icon: Icon(Icons.menu, color: Colors.white),
+                  ),
+                  SizedBox(width: 12),
+                  Image.asset(
+                    "assets/sponsors/dpl2.png",
+                    height: 40,
+                  ),
+                  Text(
+                    "Deedar Premier League",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.white),
+                  ),
+                  Spacer(),
+                  // Navigation menu items
+                  Row(
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MatchesScreen()));
+                          },
+                          child: _navItem("Matches")),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PointsTableScreen()));
+                        },
+                        child: _navItem("Point Table"),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => VideoListScreen()));
+                        },
+                        child: _navItem("Videos"),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeamsScreen()));
+                        },
+                        child: _navItem("Teams"),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MatchGalleryScreen()));
+                        },
+                        child: _navItem("Gallery"),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -304,7 +409,7 @@ class _HomePageState extends State<HomePage> {
               ),
               SizedBox(height: 8),
               Text(
-                "4 June, 2024 | 01.28min",
+                "17 July, 2025 | 01.05min",
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 14,
@@ -318,8 +423,39 @@ class _HomePageState extends State<HomePage> {
                 height: Responsive.isSmallScreen(context)
                     ? MediaQuery.of(context).size.width * 9.0 / 16.0
                     : MediaQuery.of(context).size.width * 9.0 / 26.0,
-                // Use [Video] widget to display video output.
-                child: Video(controller: controller),
+                child: GestureDetector(
+                  onTap: () {
+                    if (controller.player.state.playing) {
+                      controller.player.pause();
+                    } else {
+                      controller.player.play();
+                    }
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Video(controller: controller),
+
+                      // ✅ Use StreamBuilder to show/hide play icon
+                      StreamBuilder<bool>(
+                        stream: controller.player.stream.playing,
+                        initialData: controller.player.state.playing,
+                        builder: (context, snapshot) {
+                          final isPlaying = snapshot.data ?? false;
+                          if (!isPlaying) {
+                            return Icon(
+                              Icons.play_circle_fill,
+                              color: Colors.white.withOpacity(0.7),
+                              size: 64,
+                            );
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

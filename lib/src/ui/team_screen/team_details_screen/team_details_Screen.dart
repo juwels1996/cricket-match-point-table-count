@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
 import '../../../utils/responsives_classes.dart';
+import '../owner_details_Screen.dart';
 
 class TeamDetailScreen extends StatefulWidget {
   final int teamId;
@@ -13,8 +14,11 @@ class TeamDetailScreen extends StatefulWidget {
   _TeamDetailScreenState createState() => _TeamDetailScreenState();
 }
 
-class _TeamDetailScreenState extends State<TeamDetailScreen> {
+class _TeamDetailScreenState extends State<TeamDetailScreen>
+    with TickerProviderStateMixin {
   Map<String, dynamic>? teamData;
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
 
   Future<void> fetchTeamDetails() async {
     final response = await http.get(
@@ -32,6 +36,25 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
   void initState() {
     super.initState();
     fetchTeamDetails();
+
+    // Set up the animation controller for slide-in animation
+    _controller = AnimationController(
+      duration: Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: Offset(0.0, 1.0), // Start position (below the screen)
+      end: Offset(0.0, 0.0), // End position (center of the screen)
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    _controller.forward(); // Start the animation
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -65,7 +88,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
               Center(
                 child: Image.network(
                   teamData!['logo'],
-                  height: 100.h,
+                  height: 85.h,
                 ),
               ),
             SizedBox(height: 20.h),
@@ -83,10 +106,13 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
 
             SizedBox(height: 20),
 
-            // Owners Grid
+            // Owners Grid with animation
             Text("Owners",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            _buildGrid(teamData!['owners'], "No owners available"),
+            SlideTransition(
+              position: _slideAnimation,
+              child: _buildGrid(teamData!['owners'], "No owners available"),
+            ),
           ],
         ),
       ),
@@ -122,15 +148,25 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount, // 2 on small, 4 on large screens
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: Responsive.isLargeScreen(context)
-            ? 1.5
-            : 1.1, // Adjust aspect ratio based on screen size
+        crossAxisSpacing: 5,
+        mainAxisSpacing: 5,
       ),
       itemCount: list.length,
       itemBuilder: (context, index) {
-        return _buildCard(list[index]);
+        return GestureDetector(
+          onTap: () {
+            // Navigate to OwnerDetailsScreen and pass the selected owner data
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OwnerDetailsScreen(
+                  owner: list[index], // Pass the owner data
+                ),
+              ),
+            );
+          },
+          child: _buildCard(list[index]),
+        );
       },
     );
   }
@@ -138,8 +174,8 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
   /// Build individual cards
   Widget _buildCard(Map<String, dynamic> item) {
     return Container(
-      width: 140, // Fixed width to maintain consistent card size
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+      width: 120, // Fixed width to maintain consistent card size
+      margin: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -159,12 +195,12 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
               borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
               child: AspectRatio(
                 aspectRatio: Responsive.isLargeScreen(context)
-                    ? 8 / 4
-                    : 6 / 4, // Taller image ratio
+                    ? 1.4
+                    : 1.4, // Taller image ratio
                 child: item['image_url'] != null && item['image_url'].isNotEmpty
                     ? Image.network(
                         item['image_url'],
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         errorBuilder: (_, __, ___) =>
                             Image.asset('assets/images/default_avatar.png'),
                       )

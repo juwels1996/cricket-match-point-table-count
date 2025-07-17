@@ -44,9 +44,7 @@ class _AdviserScreenState extends State<AdviserScreen> {
             crossAxisCount: _getColumns(context), // Use responsive column count
             crossAxisSpacing: 2,
             mainAxisSpacing: 2,
-            childAspectRatio: 0.4
-            // Adjust aspect ratio based on screen size
-            ),
+            childAspectRatio: 0.4),
         itemCount: advisers.length,
         itemBuilder: (context, index) {
           return Card(

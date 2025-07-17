@@ -25,7 +25,10 @@ class _MatchGalleryScreenState extends State<MatchGalleryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Match Photo Gallery'),
+        title: Text(
+          'Match Photo Gallery',
+          style: TextStyle(fontSize: 22, fontStyle: FontStyle.italic),
+        ),
       ),
       body: FutureBuilder<List<MatchGallery>>(
         future: matchGalleryList,
@@ -132,9 +135,10 @@ class _MatchGalleryScreenState extends State<MatchGalleryScreen> {
                             galleryList[0].description,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
+                            maxLines: 2,
                           ),
                         ),
                         Positioned(
@@ -143,7 +147,7 @@ class _MatchGalleryScreenState extends State<MatchGalleryScreen> {
                           child: Text(
                             galleryList[0].date,
                             style:
-                                TextStyle(color: Colors.white70, fontSize: 12),
+                                TextStyle(color: Colors.white70, fontSize: 10),
                           ),
                         ),
                       ],

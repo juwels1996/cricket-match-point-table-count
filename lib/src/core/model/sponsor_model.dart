@@ -1,17 +1,19 @@
-class SponsorModel {
-  final String? title;
+class Sponsor {
+  final String name;
   final String image;
+  final String category;
 
-  SponsorModel({
-    this.title,
+  Sponsor({
+    required this.name,
     required this.image,
+    required this.category,
   });
 
-  // Convert JSON to PDF object
-  factory SponsorModel.fromJson(Map<String, dynamic> json) {
-    return SponsorModel(
-      title: json['title'] ?? "",
+  factory Sponsor.fromJson(Map<String, dynamic> json) {
+    return Sponsor(
+      name: json['name'],
       image: json['image'],
+      category: json['category'],
     );
   }
 }

@@ -46,9 +46,9 @@ class _PointsTableScreenState extends State<PointsTableScreen> {
           title: Text(
             "Points Table",
             style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                fontStyle: FontStyle.italic),
           )),
       body: teams.isEmpty
           ? Center(child: CircularProgressIndicator())
@@ -133,6 +133,14 @@ class _PointsTableScreenState extends State<PointsTableScreen> {
                           )),
                         ],
                       ),
+                      SizedBox(height: 8),
+                      Divider(
+                        height: 2,
+                        thickness: 1.5,
+                        indent: 10,
+                        endIndent: 10,
+                        color: Colors.grey,
+                      ),
                       // List of Teams
                       Container(
                         height: getCardHeight(), // Dynamic height for the card
@@ -145,58 +153,66 @@ class _PointsTableScreenState extends State<PointsTableScreen> {
                             String customTeamName =
                                 teamNameMapping[teamName] ?? teamName;
 
-                            return Padding(
-                              padding: EdgeInsets.only(top: 10.0),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 20,
-                                    backgroundImage:
-                                        NetworkImage(teams[index]['logo']),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      customTeamName,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(top: 10.0),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 20,
+                                        backgroundImage:
+                                            NetworkImage(teams[index]['logo']),
                                       ),
-                                    ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          customTeamName,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                              fontStyle: FontStyle.italic),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                            teams[index]['matches_played']
+                                                .toString(),
+                                            textAlign: TextAlign.center),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                            teams[index]['wins'].toString(),
+                                            textAlign: TextAlign.center),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                            teams[index]['losses'].toString(),
+                                            textAlign: TextAlign.center),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                            teams[index]['ties'].toString(),
+                                            textAlign: TextAlign.center),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          ((teams[index]['net_run_rate'] ?? 0.0)
+                                                  as double)
+                                              .toStringAsFixed(2),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                            teams[index]['points'].toString(),
+                                            textAlign: TextAlign.center),
+                                      ),
+                                    ],
                                   ),
-                                  Expanded(
-                                    child: Text(
-                                        teams[index]['matches_played']
-                                            .toString(),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                  Expanded(
-                                    child: Text(teams[index]['wins'].toString(),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                        teams[index]['losses'].toString(),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                  Expanded(
-                                    child: Text(teams[index]['ties'].toString(),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      (teams[index]['net_run_rate'] ?? 0)
-                                          .toString(), // Ensure it's converted to String
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                        teams[index]['points'].toString(),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                ],
-                              ),
+                                ),
+                                Divider(), // Divider after each Row
+                              ],
                             );
                           },
                         ),
@@ -213,7 +229,7 @@ class _PointsTableScreenState extends State<PointsTableScreen> {
   double getCardHeight() {
     // 50 is the space for the header and 10 for padding
     int itemCount = teams.length;
-    double calculatedHeight = itemCount * 50.0 + 60.0;
+    double calculatedHeight = itemCount * 70.0 + 80.0;
 
     // Setting a max height for card
     double maxHeight = 900.0;
