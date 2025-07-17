@@ -348,10 +348,10 @@ packages:
     dependency: transitive
     description:
       name: freezed_annotation
-      sha256: c87ff004c8aa6af2d531668b46a4ea379f7191dc6dfa066acd53d506da6e044b
+      sha256: "7294967ff0a6d98638e7acb774aac3af2550777accd8149c90af5b014e6d44d8"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "3.1.0"
   get:
     dependency: transitive
     description:
@@ -732,10 +732,10 @@ packages:
     dependency: "direct main"
     description:
       name: permission_handler
-      sha256: "2d070d8684b68efb580a5997eb62f675e8a885ef0be6e754fb9ef489c177470f"
+      sha256: bc917da36261b00137bbc8896bf1482169cd76f866282368948f032c8c1caae1
       url: "https://pub.dev"
     source: hosted
-    version: "12.0.0+1"
+    version: "12.0.1"
   permission_handler_android:
     dependency: transitive
     description:
@@ -812,10 +812,10 @@ packages:
     dependency: transitive
     description:
       name: posix
-      sha256: f0d7856b6ca1887cfa6d1d394056a296ae33489db914e365e2044fdada449e62
+      sha256: "6323a5b0fa688b6a010df4905a56b00181479e6d10534cecfecede2aa55add61"
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.2"
+    version: "6.0.3"
   pub_api_client:
     dependency: transitive
     description:
@@ -868,10 +868,10 @@ packages:
     dependency: transitive
     description:
       name: screen_brightness_android
-      sha256: "6ba1b5812f66c64e9e4892be2d36ecd34210f4e0da8bdec6a2ea34f1aa42683e"
+      sha256: fb5fa43cb89d0c9b8534556c427db1e97e46594ac5d66ebdcf16063b773d54ed
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "2.1.2"
   screen_brightness_platform_interface:
     dependency: transitive
     description:
@@ -1001,10 +1001,10 @@ packages:
     dependency: transitive
     description:
       name: synchronized
-      sha256: "0669c70faae6270521ee4f05bffd2919892d42d1276e6c495be80174b6bc0ef6"
+      sha256: c254ade258ec8282947a0acbbc90b9575b4f19673533ee46f2f6e9b3aeefd7c0
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.1"
+    version: "3.4.0"
   term_glyph:
     dependency: transitive
     description:
@@ -1081,10 +1081,10 @@ packages:
     dependency: "direct main"
     description:
       name: url_launcher
-      sha256: "9d06212b1362abc2f0f0d78e6f09f726608c74e3b9462e8368bb03314aa8d603"
+      sha256: f6a7e5c4835bb4e3026a04793a4199ca2d14c739ec378fdfe23fc8075d0439f8
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.1"
+    version: "6.3.2"
   url_launcher_android:
     dependency: transitive
     description:
@@ -1177,26 +1177,26 @@ packages:
     dependency: transitive
     description:
       name: video_player_avfoundation
-      sha256: "9ee764e5cd2fc1e10911ae8ad588e1a19db3b6aa9a6eb53c127c42d3a3c3f22f"
+      sha256: "9fedd55023249f3a02738c195c906b4e530956191febf0838e37d0dac912f953"
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.1"
+    version: "2.8.0"
   video_player_platform_interface:
     dependency: transitive
     description:
       name: video_player_platform_interface
-      sha256: df534476c341ab2c6a835078066fc681b8265048addd853a1e3c78740316a844
+      sha256: cf2a1d29a284db648fd66cbd18aacc157f9862d77d2cc790f6f9678a46c1db5a
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.0"
+    version: "6.4.0"
   video_player_web:
     dependency: transitive
     description:
       name: video_player_web
-      sha256: e8bba2e5d1e159d5048c9a491bb2a7b29c535c612bb7d10c1e21107f5bd365ba
+      sha256: "9f3c00be2ef9b76a95d94ac5119fb843dca6f2c69e6c9968f6f2b6c9e7afbdeb"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.5"
+    version: "2.4.0"
   vm_service:
     dependency: transitive
     description:
@@ -1249,10 +1249,10 @@ packages:
     dependency: transitive
     description:
       name: webview_flutter_android
-      sha256: f6e6afef6e234801da77170f7a1847ded8450778caf2fe13979d140484be3678
+      sha256: "769f34fc9855f7d7789b786b79b7c37a60e92ff08f71e3a429208d7f5b81d944"
       url: "https://pub.dev"
     source: hosted
-    version: "4.7.0"
+    version: "4.8.0"
   webview_flutter_platform_interface:
     dependency: transitive
     description:
@@ -1265,10 +1265,10 @@ packages:
     dependency: transitive
     description:
       name: webview_flutter_wkwebview
-      sha256: a3d461fe3467014e05f3ac4962e5fdde2a4bf44c561cb53e9ae5c586600fdbc3
+      sha256: "71523b9048cf510cfa1fd4e0a3fa5e476a66e0884d5df51d59d5023dba237107"
       url: "https://pub.dev"
     source: hosted
-    version: "3.22.0"
+    version: "3.22.1"
   win32:
     dependency: transitive
     description:
@@ -1305,10 +1305,10 @@ packages:
     dependency: transitive
     description:
       name: youtube_explode_dart
-      sha256: "8db47e0f947598f6aa29d2862efb98b92af0c78990d4b23c224f3475c556b47b"
+      sha256: "9cd131624135065a6866c1e8ad4f4703e5bcfd1da322d4fddc55c972d04b6b22"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.2"
+    version: "2.5.1"
   youtube_player_flutter:
     dependency: "direct main"
     description:

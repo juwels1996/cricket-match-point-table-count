@@ -43,6 +43,11 @@ class _SponsorScreenState extends State<SponsorScreen> {
 
         final selectedSponsors = sponsorsByCategory[selectedCategory] ?? [];
 
+        final sortedCategories = [
+          if (categoryNames.contains("Main Sponsor")) "Main Sponsor",
+          ...categoryNames.where((c) => c != "Main Sponsor"),
+        ];
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -60,14 +65,13 @@ class _SponsorScreenState extends State<SponsorScreen> {
               ),
             ),
 
-            // CATEGORY ROW with IMAGE and NAME
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.all(12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: categoryNames.map((category) {
+                children: sortedCategories.map((category) {
                   final sponsors = sponsorsByCategory[category];
                   final imageUrl = sponsors != null && sponsors.isNotEmpty
                       ? sponsors.first.image
