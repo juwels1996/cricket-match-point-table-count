@@ -1,6 +1,5 @@
-import 'package:cricket_scorecard/src/utils/responsives_classes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../core/api-service/api_services.dart';
 import '../../../core/model/sponsor_model.dart';
 
@@ -14,7 +13,6 @@ class SponsorScreen extends StatefulWidget {
 class _SponsorScreenState extends State<SponsorScreen> {
   late Future<Map<String, List<Sponsor>>> _futureSponsors;
   final ApiService apiService = ApiService();
-  String selectedCategory = '';
 
   @override
   void initState() {
@@ -30,134 +28,86 @@ class _SponsorScreenState extends State<SponsorScreen> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
+          return Center(
+              child: Text("Error: ${snapshot.error}",
+                  style: const TextStyle(color: Colors.white)));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+              child: Text("No sponsors found",
+                  style: TextStyle(color: Colors.white70)));
         }
 
         final sponsorsByCategory = snapshot.data!;
-        final categoryNames = sponsorsByCategory.keys.toList();
+        // Combine all sponsors from every category
+        final allSponsors =
+            sponsorsByCategory.values.expand((list) => list).toList();
 
-        // Set initial category
-        if (selectedCategory.isEmpty && categoryNames.isNotEmpty) {
-          selectedCategory = categoryNames.first;
-        }
-
-        final selectedSponsors = sponsorsByCategory[selectedCategory] ?? [];
-
-        final sortedCategories = [
-          if (categoryNames.contains("Main Sponsor")) "Main Sponsor",
-          ...categoryNames.where((c) => c != "Main Sponsor"),
-        ];
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 8,
-            ),
-            Center(
-              child: Text(
-                "Sponsor",
-                style: TextStyle(
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 8),
+              const Center(
+                child: Text(
+                  "All Sponsors",
+                  style: TextStyle(
                     fontSize: 22,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.italic),
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 20),
 
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: sortedCategories.map((category) {
-                  final sponsors = sponsorsByCategory[category];
-                  final imageUrl = sponsors != null && sponsors.isNotEmpty
-                      ? (sponsors.first.image.startsWith('http')
-                          ? sponsors.first.image
-                              .replaceFirst('http://', 'https://')
-                          : 'https://backend.dplt10.org${sponsors.first.image}')
-                      : null;
+              // ✅ Grid-style layout for all sponsors
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 12,
+                runSpacing: 12,
+                children: allSponsors.map((s) {
+                  final imageUrl = s.image.startsWith('http')
+                      ? s.image
+                      : 'http://192.168.68.101:8000${s.image}';
 
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedCategory = category;
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: Column(
-                        children: [
-                          Text(
-                            category,
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontWeight: FontWeight.w600,
-                            ),
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          imageUrl,
+                          height: 80,
+                          width: 120,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                            height: 80,
+                            width: 120,
+                            color: Colors.grey[800],
+                            alignment: Alignment.center,
+                            child: const Icon(Icons.broken_image,
+                                color: Colors.white54),
                           ),
-                          SizedBox(height: 8.h),
-                          if (imageUrl != null)
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                imageUrl,
-                                height: Responsive.isSmallScreen(context)
-                                    ? 90
-                                    : 120,
-                                width: Responsive.isSmallScreen(context)
-                                    ? 120
-                                    : 160,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          const SizedBox(height: 6),
-                        ],
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 6),
+                      Text(
+                        s.name,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   );
                 }).toList(),
               ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // SPONSORS OF SELECTED CATEGORY
-            // Expanded(
-            //   child: ListView.builder(
-            //     padding: const EdgeInsets.all(16),
-            //     itemCount: selectedSponsors.length,
-            //     itemBuilder: (context, index) {
-            //       final sponsor = selectedSponsors[index];
-            //       return Padding(
-            //         padding: const EdgeInsets.only(bottom: 16),
-            //         child: Row(
-            //           children: [
-            //             ClipRRect(
-            //               borderRadius: BorderRadius.circular(8),
-            //               child: Image.network(
-            //                 sponsor.image,
-            //                 height: 60,
-            //                 width: 100,
-            //                 fit: BoxFit.cover,
-            //               ),
-            //             ),
-            //             const SizedBox(width: 12),
-            //             Expanded(
-            //               child: Text(
-            //                 sponsor.name,
-            //                 style: const TextStyle(
-            //                     fontSize: 16, color: Colors.white),
-            //               ),
-            //             )
-            //           ],
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
-          ],
+              const SizedBox(height: 20),
+            ],
+          ),
         );
       },
     );

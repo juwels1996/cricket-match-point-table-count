@@ -1,242 +1,637 @@
 import 'dart:convert';
+import 'dart:ui';
+import 'package:cricket_scorecard/src/core/const.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
 import '../../../utils/responsives_classes.dart';
 import '../owner_details_Screen.dart';
 
 class TeamDetailScreen extends StatefulWidget {
   final int teamId;
-
-  TeamDetailScreen({required this.teamId});
+  const TeamDetailScreen({required this.teamId, super.key});
 
   @override
-  _TeamDetailScreenState createState() => _TeamDetailScreenState();
+  State<TeamDetailScreen> createState() => _TeamDetailScreenState();
 }
 
 class _TeamDetailScreenState extends State<TeamDetailScreen>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   Map<String, dynamic>? teamData;
-  late AnimationController _controller;
-  late Animation<Offset> _slideAnimation;
+  bool isLoading = true;
+  String? errorMsg;
 
-  Future<void> fetchTeamDetails() async {
-    final response = await http.get(
-      Uri.parse("https://backend.dplt10.org/api/teams/${widget.teamId}/"),
-    );
+  // bg anim
+  late final AnimationController _bgCtrl;
 
-    if (response.statusCode == 200) {
+  // simple accent by team name (fallback if not found)
+  static const Map<String, Color> _teamColors = {
+    "Northan Falcons": Color(0xFFFFCC00),
+    "Kabir Chairman Warriors": Color(0xFF045093),
+    "Ripon Cricket Stars": Color(0xFFDA1818),
+    "The Kingdon Of South": Color(0xFF17443D),
+    "Dr. Ali Legal Lions": Color(0xFF3F2051),
+    "Doctor's Super Kings": Color(0xFFFF822A),
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _bgCtrl =
+        AnimationController(vsync: this, duration: const Duration(seconds: 4))
+          ..repeat(reverse: true);
+    _fetchTeamDetails();
+  }
+
+  @override
+  void dispose() {
+    _bgCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchTeamDetails() async {
+    if (!mounted) return;
+    setState(() {
+      isLoading = true;
+      errorMsg = null;
+    });
+    try {
+      final res = await http.get(
+        Uri.parse("${Constants.baseUrl}teams/${widget.teamId}/"),
+      );
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body) as Map<String, dynamic>;
+        if (!mounted) return;
+        setState(() {
+          teamData = data;
+          isLoading = false;
+        });
+      } else {
+        if (!mounted) return;
+        setState(() {
+          isLoading = false;
+          errorMsg = "Server error: ${res.statusCode}";
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
       setState(() {
-        teamData = jsonDecode(response.body);
+        isLoading = false;
+        errorMsg = "Network error. Please try again.";
       });
     }
   }
 
   @override
-  void initState() {
-    super.initState();
-    fetchTeamDetails();
-
-    // Set up the animation controller for slide-in animation
-    _controller = AnimationController(
-      duration: Duration(milliseconds: 500),
-      vsync: this,
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: Offset(0.0, 1.0), // Start position (below the screen)
-      end: Offset(0.0, 0.0), // End position (center of the screen)
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-
-    _controller.forward(); // Start the animation
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (teamData == null) {
-      return Scaffold(
-        appBar: AppBar(title: Text("Loading...")),
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    // Separate players by category
-    var localPlayers = teamData!['players']
-        .where((player) => player['category'] == 'Local')
-        .toList();
-    var semiLocalPlayers = teamData!['players']
-        .where((player) => player['category'] == 'Semi-Local')
-        .toList();
-    var overseasPlayers = teamData!['players']
-        .where((player) => player['category'] == 'Overseas')
-        .toList();
+    final name = (teamData?['name'] ?? 'Team').toString();
+    final logo = (teamData?['logo'] ?? '').toString();
+    final accent = _teamColors[name] ?? _Brand.accent;
 
     return Scaffold(
-      appBar: AppBar(title: Text(teamData!['name'])),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (teamData!['logo'] != null && teamData!['logo'].isNotEmpty)
-              Center(
-                child: Image.network(
-                  teamData!['logo'],
-                  height: 85.h,
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          _animatedBackground(),
+          SafeArea(
+            child: Column(
+              children: [
+                _FrostedAppBar(
+                  title: name,
+                  onBack: () => Navigator.maybePop(context),
                 ),
-              ),
-            SizedBox(height: 20.h),
 
-            _buildCategorySection("Local Players", localPlayers),
-            _buildCategorySection("Semi-Local Players", semiLocalPlayers),
-            _buildCategorySection("Overseas Players", overseasPlayers),
+                // Team header (logo + name)
+                GlassSection(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: [
+                              accent.withOpacity(0.9),
+                              accent.withOpacity(0.5)
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          border:
+                              Border.all(color: Colors.white.withOpacity(0.2)),
+                        ),
+                        child: ClipOval(
+                          child: logo.isNotEmpty
+                              ? Image.network(logo, fit: BoxFit.cover)
+                              : const Icon(Icons.shield,
+                                  color: Colors.white, size: 36),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
-            SizedBox(height: 20),
-
-            // Coaches Grid
-            Text("Coaches",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            _buildGrid(teamData!['coaches'], "No coaches available"),
-
-            SizedBox(height: 20),
-
-            // Owners Grid with animation
-            Text("Owners",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            SlideTransition(
-              position: _slideAnimation,
-              child: _buildGrid(teamData!['owners'], "No owners available"),
+                // content
+                Expanded(
+                  child: RefreshIndicator(
+                    color: _Brand.accent,
+                    onRefresh: _fetchTeamDetails,
+                    child: isLoading
+                        ? const Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 80),
+                              child: CircularProgressIndicator(
+                                  color: Colors.white),
+                            ),
+                          )
+                        : (errorMsg != null
+                            ? ListView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                children: [
+                                  const SizedBox(height: 120),
+                                  Center(
+                                    child: GlassSection(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 18, vertical: 16),
+                                        child: Text(
+                                          errorMsg!,
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : _buildBody(context, accent)),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildCategorySection(String categoryName, List<dynamic> players) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildBody(BuildContext context, Color accent) {
+    final players =
+        (teamData?['players'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+    final local =
+        players.where((p) => (p['category'] ?? '') == 'Local').toList();
+    final semiLocal =
+        players.where((p) => (p['category'] ?? '') == 'Semi-Local').toList();
+    final overseas =
+        players.where((p) => (p['category'] ?? '') == 'Overseas').toList();
+
+    final coaches =
+        (teamData?['coaches'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+    final owners =
+        (teamData?['owners'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
-        Text(categoryName,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        if (players.isEmpty)
-          Center(
-              child: Text("No $categoryName available",
-                  style: TextStyle(color: Colors.grey))),
-        _buildGrid(players, "No $categoryName available"),
+        _CategorySection(
+            title: "Local Players",
+            accent: accent,
+            child: _grid(local, accent)),
+        _CategorySection(
+            title: "Semi-Local Players",
+            accent: accent,
+            child: _grid(semiLocal, accent)),
+        _CategorySection(
+            title: "Overseas Players",
+            accent: accent,
+            child: _grid(overseas, accent)),
+        _CategorySection(
+            title: "Coaches", accent: accent, child: _grid(coaches, accent)),
+        _CategorySection(
+            title: "Owners",
+            accent: accent,
+            child: _grid(owners, accent, slideIn: true)),
       ],
     );
   }
 
-  /// Build responsive grid for players, coaches, and owners
-  Widget _buildGrid(List<dynamic>? list, String emptyMessage) {
-    if (list == null || list.isEmpty) {
-      return Center(
-          child: Text(emptyMessage, style: TextStyle(color: Colors.grey)));
+  Widget _grid(List<Map<String, dynamic>> list, Color accent,
+      {bool slideIn = false}) {
+    if (list.isEmpty) {
+      return const GlassSection(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 14),
+          child: Center(
+            child: Text("No data available",
+                style: TextStyle(color: Colors.white70)),
+          ),
+        ),
+      );
     }
 
-    int crossAxisCount = Responsive.isLargeScreen(context) ? 5 : 2;
+    final width = MediaQuery.of(context).size.width;
+    final crossAxisCount =
+        Responsive.isLargeScreen(context) ? 5 : (width >= 800 ? 3 : 2);
 
-    return GridView.builder(
+    final grid = GridView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount, // 2 on small, 4 on large screens
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 5,
-      ),
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: list.length,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            // Navigate to OwnerDetailsScreen and pass the selected owner data
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => OwnerDetailsScreen(
-                  owner: list[index], // Pass the owner data
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 0.72, // taller IPL style
+      ),
+      itemBuilder: (_, i) => _IplCard(
+        item: list[i],
+        accent: accent,
+        animMs: 380 + (i % 8) * 30,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => OwnerDetailsScreen(owner: list[i]),
+            ),
+          );
+        },
+      ),
+    );
+
+    if (!slideIn) return grid;
+
+    // subtle slide-in for owners like your original
+    return TweenAnimationBuilder<Offset>(
+      tween: Tween(begin: const Offset(0, 0.06), end: Offset.zero),
+      duration: const Duration(milliseconds: 360),
+      curve: Curves.easeOutCubic,
+      builder: (_, offset, child) => Transform.translate(
+        offset: offset * 40.0,
+        child: child,
+      ),
+      child: grid,
+    );
+  }
+
+  // ===== background =====
+  Widget _animatedBackground() {
+    return AnimatedBuilder(
+      animation: _bgCtrl,
+      builder: (_, __) {
+        final t = _bgCtrl.value;
+        return Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment(-1, -1),
+                  end: Alignment(1, 1),
+                  colors: [_Brand.bgTop, _Brand.bgBottom],
                 ),
               ),
-            );
-          },
-          child: _buildCard(list[index]),
+            ),
+            Positioned(
+              left: -140 + 40 * t,
+              top: -120 + 30 * (1 - t),
+              child: _blob(280, _Brand.primary.withOpacity(0.28)),
+            ),
+            Positioned(
+              right: -110 + 30 * (1 - t),
+              bottom: -140 + 40 * t,
+              child: _blob(340, _Brand.accent.withOpacity(0.24)),
+            ),
+          ],
         );
       },
     );
   }
 
-  /// Build individual cards
-  Widget _buildCard(Map<String, dynamic> item) {
+  Widget _blob(double size, Color color) {
     return Container(
-      width: 120, // Fixed width to maintain consistent card size
-      margin: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+      width: size,
+      height: size,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(2, 2),
-          ),
-        ],
+        shape: BoxShape.circle,
+        color: color,
+        boxShadow: [BoxShadow(blurRadius: 64, spreadRadius: 12, color: color)],
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              child: AspectRatio(
-                aspectRatio: Responsive.isLargeScreen(context)
-                    ? 1.4
-                    : 1.4, // Taller image ratio
-                child: item['image_url'] != null && item['image_url'].isNotEmpty
-                    ? Image.network(
-                        item['image_url'],
-                        fit: BoxFit.fill,
-                        errorBuilder: (_, __, ___) =>
-                            Image.asset('assets/images/default_avatar.png'),
-                      )
-                    : Image.asset('assets/images/default_avatar.png'),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 6.0, horizontal: 4.0),
-              child: Column(
-                children: [
-                  Text(
-                    item['name'] ?? 'No Name',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
+// ================= IPL-style Card =================
+
+class _IplCard extends StatelessWidget {
+  const _IplCard({
+    required this.item,
+    required this.accent,
+    required this.animMs,
+    required this.onTap,
+  });
+
+  final Map<String, dynamic> item;
+  final Color accent;
+  final int animMs;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final img = (item['image_url'] ?? '').toString();
+    final name = (item['name'] ?? 'No Name').toString();
+    final role = (item['role'] ?? '').toString();
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.92, end: 1.0),
+      duration: Duration(milliseconds: animMs),
+      curve: Curves.easeOutCubic,
+      builder: (_, scale, child) => Transform.scale(scale: scale, child: child),
+      child: GestureDetector(
+        onTap: onTap,
+        child: GlassSection(
+          padding: EdgeInsets.zero,
+          radius: 18,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Gradient header bar + badge chip (IPL vibe)
+              Container(
+                height: 12,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [accent, accent.withOpacity(0.6)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
                   ),
-                  SizedBox(height: 2),
-                  Text(
-                    item['role'] ?? '',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+
+              // Image pane with glossy overlay & corner ribbon
+              Expanded(
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: img.isNotEmpty
+                          ? Image.network(
+                              img,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Image.asset(
+                                'assets/images/default_avatar.png',
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Image.asset('assets/images/default_avatar.png',
+                              fit: BoxFit.cover),
+                    ),
+                    // subtle gloss
+                    Positioned.fill(
+                      child: IgnorePointer(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white.withOpacity(0.08),
+                                Colors.transparent
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // top-left ribbon for role
+                    if (role.isNotEmpty)
+                      Positioned(
+                        top: 3,
+                        left: -6,
+                        child: _Ribbon(
+                            text: role.toUpperCase(), accent: Colors.orange),
+                      ),
+                  ],
+                ),
+              ),
+
+              // Name / role
+              Container(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.04),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14,
+                      ),
+                    ),
+                    if (role.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        role,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            color: Colors.white70, fontSize: 12),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+class _Ribbon extends StatelessWidget {
+  const _Ribbon({required this.text, required this.accent});
+  final String text;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: -0.1,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: accent.withOpacity(0.95),
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: [
+            BoxShadow(
+              color: accent.withOpacity(0.5),
+              blurRadius: 10,
+              spreadRadius: 1,
+            )
+          ],
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+            fontSize: 8,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ================= Category Section =================
+
+class _CategorySection extends StatelessWidget {
+  const _CategorySection({
+    required this.title,
+    required this.accent,
+    required this.child,
+  });
+
+  final String title;
+  final Color accent;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GlassSection(
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+          child: Row(
+            children: [
+              Container(
+                width: 6,
+                height: 18,
+                decoration: BoxDecoration(
+                  color: accent,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 6),
+        child,
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+}
+
+// ================= Glass, AppBar, Brand =================
+
+class GlassSection extends StatelessWidget {
+  final EdgeInsetsGeometry padding;
+  final Widget child;
+  final double radius;
+  const GlassSection({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(16),
+    this.radius = 20,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(radius),
+              color: Colors.white.withOpacity(0.08),
+              border: Border.all(color: Colors.white.withOpacity(0.16)),
+            ),
+            padding: padding,
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FrostedAppBar extends StatelessWidget {
+  const _FrostedAppBar({required this.title, this.onBack});
+  final String title;
+  final VoidCallback? onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          height: 56,
+          width: double.infinity,
+          decoration: BoxDecoration(color: Colors.black.withOpacity(0.12)),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: onBack,
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Brand {
+  static const bgTop = Color(0xFF1B1F3B);
+  static const bgBottom = Color(0xFF0F1222);
+  static const primary = Color(0xFF635BFF);
+  static const accent = Color(0xFF19C3FB);
 }

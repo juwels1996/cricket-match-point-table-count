@@ -4,7 +4,7 @@ import '../model/photo_gallery.dart';
 import '../model/sponsor_model.dart';
 
 class ApiService {
-  final String apiUrl = 'https://backend.dplt10.org/api/sponsor/';
+  final String apiUrl = 'http://192.168.68.101:8000/api/matchgallery/';
 
   // Fetch match gallery data
   Future<List<MatchGallery>> fetchMatchGallery() async {

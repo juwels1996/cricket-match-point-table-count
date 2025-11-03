@@ -78,53 +78,57 @@ class _OwnerDetailsScreenState extends State<OwnerDetailsScreen>
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Fade-in animation for the owner's image
-              FadeTransition(
-                opacity: _imageFadeAnimation,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    imageUrl,
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    width: MediaQuery.of(context).size.height * 0.3,
-                    fit: BoxFit.fill,
-                    errorBuilder: (_, __, ___) =>
-                        Image.asset('assets/images/default_avatar.png'),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Fade-in animation for the owner's image
+                FadeTransition(
+                  opacity: _imageFadeAnimation,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      imageUrl,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      width: MediaQuery.of(context).size.height * 0.3,
+                      fit: BoxFit.fill,
+                      errorBuilder: (_, __, ___) =>
+                          Image.asset('assets/images/default_avatar.png'),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
+                SizedBox(height: 20),
 
-              // Slide-in animation for the owner's name
-              SlideTransition(
-                position: _textSlideAnimation,
-                child: Text(
-                  name,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent, // Customize text color
+                // Slide-in animation for the owner's name
+                SlideTransition(
+                  position: _textSlideAnimation,
+                  child: Text(
+                    name,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent, // Customize text color
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 10),
+                SizedBox(height: 10),
 
-              // Slide-in animation for the owner's description
-              SlideTransition(
-                position: _textSlideAnimation,
-                child: Text(
-                  description,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black54), // Customize text style
+                // Slide-in animation for the owner's description
+                SlideTransition(
+                  position: _textSlideAnimation,
+                  child: Text(
+                    description,
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Roboto',
+                        color: Colors.black54),
+                    // Customize text style
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

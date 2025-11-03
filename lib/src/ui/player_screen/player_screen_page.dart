@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cricket_scorecard/src/core/const.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,8 +12,7 @@ class _PlayersScreenState extends State<PlayersScreen> {
   List players = [];
 
   Future<void> fetchPlayers() async {
-    final response =
-        await http.get(Uri.parse("https://backend.dplt10.org/api/players/"));
+    final response = await http.get(Uri.parse("${Constants.baseUrl}/players/"));
     if (response.statusCode == 200) {
       setState(() {
         players = jsonDecode(response.body);

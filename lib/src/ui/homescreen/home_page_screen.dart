@@ -1,41 +1,75 @@
+import 'dart:convert';
+import 'dart:ui'; // 👈 for BackdropFilter blur
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cricket_scorecard/src/ui/homescreen/componenets/video_list_screen.dart';
 import 'package:cricket_scorecard/src/ui/matches_screen/matches_screen_page.dart';
 import 'package:cricket_scorecard/src/ui/news/news_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:http/http.dart' as http;
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../utils/responsives_classes.dart';
+import '../event/event_screen.dart';
 import '../gallery_screen/gallery_screen.dart';
 import '../home_drawer/home_drawer_screen.dart';
 import '../over-stat/overall_stats_screen.dart';
+import '../over-stat/top_performer_preview.dart';
+import '../point_table/point_table_preview.dart';
 import '../point_table/point_table_screen.dart';
 import '../team_screen/all_team_player_screen.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import '../widgets/highlight_card.dart';
 import 'componenets/build_sponsor_widget.dart';
+
+// ====== Brand palette (tweak freely) ======
+class _Brand {
+  static const bgTop = Color(0xFF1B1F3B);
+  static const bgBottom = Color(0xFF0F1222);
+  static const primary = Color(0xFF635BFF);
+  static const accent = Color(0xFF19C3FB);
+}
 
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   List videos = [];
   late final player = Player();
   late final controller = VideoController(player);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  List<String> imagesList = [
+    'assets/sponsors/dpl2.png',
+    'assets/sponsors/dpl2.png',
+    'assets/sponsors/dpl2.png',
+  ];
+
   bool isLoading = true;
+
+  late final AnimationController _bgCtrl;
 
   @override
   void initState() {
     super.initState();
     fetchVideos();
     MediaKit.ensureInitialized();
+    _bgCtrl =
+        AnimationController(vsync: this, duration: const Duration(seconds: 4))
+          ..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _bgCtrl.dispose();
+    player.dispose();
+    super.dispose();
   }
 
   // Fetch YouTube video data from the backend
@@ -46,11 +80,10 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         videos = jsonDecode(response.body);
       });
-      // Initialize the YouTube player with the first video
       if (videos.isNotEmpty) {
         _initializePlayer(videos[0]['video_link']);
       }
-    } else {}
+    }
     setState(() {
       isLoading = false;
     });
@@ -60,147 +93,255 @@ class _HomePageState extends State<HomePage> {
     await player.open(Media(videoUrl), play: false); // Don't auto play
   }
 
-  @override
-  void dispose() {
-    player.dispose();
-    super.dispose();
+  // ====== Animated gradient + blobs background ======
+  Widget _animatedBackground() {
+    return AnimatedBuilder(
+      animation: _bgCtrl,
+      builder: (_, __) {
+        final t = _bgCtrl.value;
+        return Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment(-1, -1),
+                  end: Alignment(1, 1),
+                  colors: [_Brand.bgTop, _Brand.bgBottom],
+                ),
+              ),
+            ),
+            Positioned(
+              left: -140 + 40 * t,
+              top: -120 + 30 * (1 - t),
+              child: _blob(280, _Brand.primary.withOpacity(0.28)),
+            ),
+            Positioned(
+              right: -110 + 30 * (1 - t),
+              bottom: -140 + 40 * t,
+              child: _blob(340, _Brand.accent.withOpacity(0.24)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _blob(double size, Color color) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+        boxShadow: [BoxShadow(blurRadius: 64, spreadRadius: 12, color: color)],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final padding = EdgeInsets.symmetric(horizontal: width >= 1100 ? 28 : 16);
+    final double carouselHeight =
+        width >= 1100 ? 220 : (width >= 800 ? 200 : 160);
+
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
         drawer: BuildDrawer(context: context),
-        backgroundColor: Colors.white,
-        body: isLoading
-            ? Center(child: CircularProgressIndicator())
-            : CustomScrollView(
+        backgroundColor: Colors.black, // covered by gradient
+        body: Stack(
+          children: [
+            _animatedBackground(),
+            if (isLoading)
+              const Center(
+                  child: CircularProgressIndicator(color: Colors.white))
+            else
+              CustomScrollView(
                 slivers: [
-                  SliverList(
-                    delegate: SliverChildListDelegate([
-                      _buildHeader(),
-                      _buildHeroBanner(),
-                      _buildQuickLinks(context),
-                      _buildMagicMomentsSection(),
-                      // EventRegistrationCards(),
-
-                      Text(
-                        "Official Broadcaster, Title Sponsor & Partner",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
+                  // ====== Frosted SliverAppBar ======
+                  SliverAppBar(
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    pinned: true,
+                    leading: IconButton(
+                      icon: const Icon(Icons.menu, color: Colors.white),
+                      onPressed: _openDrawer,
+                    ),
+                    title: const Text(
+                      "Deedar Premier League",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Container(
-                          height: 400,
-                          width: double.infinity,
-                          color: Color(0xFF1E2A48),
+                    ),
+                    flexibleSpace: ClipRRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Container(color: Colors.black.withOpacity(0.12)),
+                      ),
+                    ),
+                  ),
+
+                  // ====== Main Content (glass cards) ======
+                  SliverPadding(
+                    padding: padding.copyWith(top: 16, bottom: 24),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        // Header
+                        GlassSection(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
+                          child: _buildHeader(),
+                        ),
+                        const SizedBox(height: 18),
+
+                        // Hero banner
+                        GlassSection(
+                          padding: EdgeInsets.zero,
+                          child: _buildHeroBanner(),
+                        ),
+                        const SizedBox(height: 18),
+
+                        // Quick links
+                        GlassSection(
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SponsorScreen(),
-                              Text(
-                                "Contact With Us",
+                              const SectionTitle("What are you Looking For?"),
+                              // use your existing quick links inside
+                              _buildQuickLinks(context),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+
+                        // Magic Moments
+                        GlassSection(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SectionTitle("Magic Moments"),
+                              _buildMagicMomentsSection(),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        PointsTablePreview(),
+                        const SizedBox(height: 18),
+                        TopPerformerBanner(),
+                        const SizedBox(height: 18),
+
+                        // Event Going On + Carousel
+                        GlassSection(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SectionTitle("Event Going on"),
+                              const Divider(
+                                  color: Colors.white24, thickness: 0.6),
+                              const SizedBox(height: 8),
+                              // Keep your CarouselSlider but with tighter wrapper
+                              // CarouselSlider(
+                              //   options: CarouselOptions(
+                              //     animateToClosest: true,
+                              //     autoPlayCurve: Curves.easeOutCirc,
+                              //     height: carouselHeight,
+                              //     autoPlay: true,
+                              //     autoPlayAnimationDuration:
+                              //         const Duration(milliseconds: 800),
+                              //     autoPlayInterval: const Duration(seconds: 3),
+                              //     enlargeCenterPage: true,
+                              //     viewportFraction: 0.45,
+                              //   ),
+                              //   items: imagesList.map((item) {
+                              //     return Builder(
+                              //       builder: (BuildContext context) {
+                              //         return ClipRRect(
+                              //           borderRadius: BorderRadius.circular(14),
+                              //           child: Stack(
+                              //             fit: StackFit.expand,
+                              //             children: [EventSection()],
+                              //           ),
+                              //         );
+                              //       },
+                              //     );
+                              //   }).toList(),
+                              // ),
+                            ],
+                          ),
+                        ),
+                        EventSection(),
+                        const SizedBox(height: 18),
+
+                        // Sponsors + Contact footer
+                        GlassSection(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 22),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Official Broadcaster, Title Sponsor & Partner",
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontSize: 20, color: Colors.white),
-                              ),
-                              Text(
-                                "Phone: 01812-557248",
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.white),
-                              ),
-                              Text(
-                                "Email: dplcrickett10@gmail.com",
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.white),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: 'FB Page: DPL - Deedar Premier League',
-                                  style: TextStyle(
-                                    color: Colors.blue,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () async {
-                                      final Uri url = Uri.parse(
-                                          'https://www.facebook.com/profile.php?id=61566986897071');
-                                      if (await canLaunchUrl(url)) {
-                                        await launchUrl(url,
-                                            mode:
-                                                LaunchMode.externalApplication);
-                                      }
-                                    },
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.white,
                                 ),
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Image.asset(
-                                    "assets/sponsors/la.png",
-                                    height: 70,
-                                  ),
-                                  Image.asset(
-                                    "assets/sponsors/la.png",
-                                    height: 70,
-                                  )
-                                ],
-                              )
+                              const SizedBox(height: 12),
+                              SponsorScreen(),
+                              const SizedBox(height: 8),
+                              const Text(
+                                "Contact With Us",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                "Phone: 01812-557248",
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white70),
+                              ),
+                              const Text(
+                                "Email: dplcrickett10@gmail.com",
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white70),
+                              ),
+                              const SizedBox(height: 6),
+                              const _FbLink(
+                                label: "FB Page: DPL - Deedar Premier League",
+                                url:
+                                    'https://www.facebook.com/profile.php?id=61566986897071',
+                              ),
+                              const SizedBox(height: 12),
+                              LayoutBuilder(builder: (context, c) {
+                                final logoSize =
+                                    c.maxWidth >= 600 ? 84.0 : 64.0;
+                                return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Image.asset("assets/sponsors/la.png",
+                                        height: logoSize),
+                                    Image.asset("assets/sponsors/la.png",
+                                        height: logoSize),
+                                  ],
+                                );
+                              }),
                             ],
-                          )),
-
-                      // Container(
-                      //   color: Color(0xff213894),
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //     children: [
-                      //       Image.asset(
-                      //         'assets/sponsors/la.png',
-                      //         fit: BoxFit.cover,
-                      //         height: 80,
-                      //         width: 100,
-                      //       ),
-                      //       Image.asset(
-                      //         'assets/sponsors/la.png',
-                      //         fit: BoxFit.cover,
-                      //         height: 80,
-                      //         width: 100,
-                      //       ),
-                      //     ],
-                      //   ),
-                      // )
-                      // TeamListScreen(),
-                      // AboutUsInformation(),
-                      // GuidelineWidget(),
-                      // ContactUsWidget(),
-                      // Center(
-                      //   child: Text(
-                      //     "App Version: 1.6.0",
-                      //     style: TextStyle(
-                      //       color: Colors.purple,
-                      //       fontFamily: 'Roboto',
-                      //       fontSize: 14,
-                      //       fontWeight: FontWeight.bold,
-                      //     ),
-                      //   ),
-                      // ),
-                      // Center(
-                      //   child: Text(
-                      //     "Developed and maintained by Juwel Sheikh❤️",
-                      //     style: TextStyle(
-                      //       color: Colors.black54,
-                      //       fontFamily: 'Roboto',
-                      //       fontSize: 14,
-                      //       fontWeight: FontWeight.bold,
-                      //     ),
-                      //   ),
-                      // ),
-                    ]),
+                          ),
+                        ),
+                      ]),
+                    ),
                   ),
                 ],
               ),
+          ],
+        ),
       ),
     );
   }
@@ -209,177 +350,170 @@ class _HomePageState extends State<HomePage> {
     _scaffoldKey.currentState?.openDrawer();
   }
 
+  // ====== Sections (your original content kept) ======
+
   Widget _buildMagicMomentsSection() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Text(
-              "Magic Moments",
-              style: TextStyle(
-                color: Colors.indigo.shade900,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
-          SizedBox(
-            height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: videos.length,
-              itemBuilder: (context, index) {
-                return HighlightCard(
-                  title: videos[index]['title'],
-                  imageUrl: videos[index]['thumbnail_url'],
-                  date: videos[index]['created_at'],
-                  duration: "05:14 mins",
-                  views: videos[index]['video_link'],
-                );
-              },
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+      child: SizedBox(
+        height: 200,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: videos.length,
+          itemBuilder: (context, index) {
+            return HighlightCard(
+              title: videos[index]['title'],
+              imageUrl: videos[index]['thumbnail_url'],
+              date: videos[index]['created_at'],
+              duration: "05:14 mins",
+              views: videos[index]['video_link'],
+            );
+          },
+        ),
       ),
     );
   }
 
-  // Header Section - IPL Logo, Search, Poll, Choice
+  // Header Section - logo + nav
   Widget _buildHeader() {
     final isMobile = Responsive.isSmallScreen(context);
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.blue.shade900,
-          borderRadius: BorderRadius.circular(30),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.blue.shade800, Colors.indigo.shade900],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header Row
-            Row(
-              children: [
-                IconButton(
-                  onPressed: _openDrawer,
-                  icon: Icon(Icons.menu, color: Colors.white),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.white.withOpacity(0.16)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Row
+          Row(
+            children: [
+              IconButton(
+                onPressed: _openDrawer,
+                icon: const Icon(Icons.menu, color: Colors.white),
+              ),
+              const SizedBox(width: 12),
+              Image.asset("assets/sponsors/dpl2.png", height: 40),
+              const SizedBox(width: 8),
+              const Text(
+                "Deedar Premier League",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
                 ),
-                SizedBox(width: 12),
-                Image.asset(
-                  "assets/sponsors/dpl2.png",
-                  height: 40,
-                ),
-                SizedBox(width: 8),
-                Text(
-                  "Deedar Premier League",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontStyle: FontStyle.italic,
-                      color: Colors.white),
-                ),
-                Spacer(),
-                if (!isMobile)
-                  Row(
-                    children: [
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MatchesScreen()));
-                          },
-                          child: _navItem("Matches")),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PointsTableScreen()));
-                        },
-                        child: _navItem("Point Table"),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => VideoListScreen()));
-                        },
-                        child: _navItem("Videos"),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TeamsScreen()));
-                        },
-                        child: _navItem("Teams"),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MatchGalleryScreen()));
-                        },
-                        child: _navItem("Gallery"),
-                      ),
-                    ],
-                  ),
-              ],
-            ),
-
-            // Show menu below for mobile
-            if (isMobile)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              ),
+              const Spacer(),
+              if (!isMobile)
+                Row(
                   children: [
                     GestureDetector(
                         onTap: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MatchesScreen()));
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MatchesScreen()),
+                          );
                         },
                         child: _navItem("Matches")),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PointsTableScreen()));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PointsTableScreen()),
+                        );
                       },
                       child: _navItem("Point Table"),
                     ),
                     GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MatchGalleryScreen()));
-                        },
-                        child: _navItem("Gallery")),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VideoListScreen()),
+                        );
+                      },
+                      child: _navItem("Videos"),
+                    ),
                     GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => VideoListScreen()));
-                        },
-                        child: _navItem("Videos")),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TeamsScreen()),
+                        );
+                      },
+                      child: _navItem("Teams"),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MatchGalleryScreen()),
+                        );
+                      },
+                      child: _navItem("Gallery"),
+                    ),
                   ],
                 ),
-              )
-          ],
-        ),
+            ],
+          ),
+          // Mobile nav below
+          if (isMobile)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MatchesScreen()),
+                        );
+                      },
+                      child: _navItem("Matches")),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PointsTableScreen()),
+                      );
+                    },
+                    child: _navItem("Point Table"),
+                  ),
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MatchGalleryScreen()),
+                        );
+                      },
+                      child: _navItem("Gallery")),
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VideoListScreen()),
+                        );
+                      },
+                      child: _navItem("Videos")),
+                ],
+              ),
+            )
+        ],
       ),
     );
   }
@@ -389,16 +523,16 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Text(
         label,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.white,
           fontSize: 14,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
-  // Hero Section with Video Player
+  // Hero Section with Video Player (kept, just overlay sits inside GlassSection now)
   Widget _buildHeroBanner() {
     return Stack(
       children: [
@@ -414,7 +548,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 "Learnings, ambitions and\nconquering dreams with\nDPL",
                 style: TextStyle(
                   color: Colors.white,
@@ -422,19 +556,17 @@ class _HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 8),
-              Text(
+              const SizedBox(height: 8),
+              const Text(
                 "17 July, 2025 | 01.05min",
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 14,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               SizedBox(
-                width: Responsive.isSmallScreen(context)
-                    ? MediaQuery.of(context).size.width
-                    : MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width,
                 height: Responsive.isSmallScreen(context)
                     ? MediaQuery.of(context).size.width * 9.0 / 16.0
                     : MediaQuery.of(context).size.width * 9.0 / 26.0,
@@ -450,8 +582,7 @@ class _HomePageState extends State<HomePage> {
                     alignment: Alignment.center,
                     children: [
                       Video(controller: controller),
-
-                      // ✅ Use StreamBuilder to show/hide play icon
+                      // show play icon when paused
                       StreamBuilder<bool>(
                         stream: controller.player.stream.playing,
                         initialData: controller.player.state.playing,
@@ -478,110 +609,26 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
-
-  // Widget _buildHeroBanner() {
-  //   String youtubeUrl = videos.isNotEmpty
-  //       ? videos[0]['video_link']
-  //       : ""; // Grab the first video URL
-  //
-  //   return Stack(
-  //     alignment: Alignment.center,
-  //     children: [
-  //       Image.asset(
-  //         "assets/sponsors/background_cover.png",
-  //         width: double.infinity,
-  //         height: MediaQuery.of(context).size.height * 0.6,
-  //         fit: BoxFit.fill,
-  //       ),
-  //       Column(
-  //         mainAxisAlignment: MainAxisAlignment.center,
-  //         children: [
-  //           SizedBox(
-  //             width: Responsive.isSmallScreen(context)
-  //                 ? MediaQuery.of(context).size.width
-  //                 : MediaQuery.of(context).size.width,
-  //             height: Responsive.isSmallScreen(context)
-  //                 ? MediaQuery.of(context).size.width * 9.0 / 16.0
-  //                 : MediaQuery.of(context).size.width * 9.0 / 26.0,
-  //             // Use [Video] widget to display video output.
-  //             child: Video(controller: controller),
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
-
-// YouTube Video Carousel
-  // Widget _buildYouTubeVideoCarousel() {
-  //   return CarouselSlider(
-  //     items: videos.map((video) {
-  //       return GestureDetector(
-  //         onTap: () {
-  //           _initializePlayer(video['video_link']); // Play selected video
-  //           setState(() {});
-  //         },
-  //         child: Column(
-  //           children: [
-  //             Image.network(video['thumbnail_url'],
-  //                 width: 300, height: 150, fit: BoxFit.cover),
-  //             SizedBox(height: 10),
-  //             Text(
-  //               video['title'],
-  //               style:
-  //                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-  //               textAlign: TextAlign.center,
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     }).toList(),
-  //     options: CarouselOptions(
-  //       height: 180,
-  //       autoPlay: true,
-  //       enlargeCenterPage: true,
-  //       viewportFraction: 0.8,
-  //       aspectRatio: 2.0,
-  //       initialPage: 0,
-  //     ),
-  //   );
-  // }
-
-// YouTube Video Carousel
 }
 
-/// ✅ **"What Are You Looking For?" Section**
+// ====== Quick links (your existing widget kept) ======
 Widget _buildQuickLinks(BuildContext context) {
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    padding: EdgeInsets.all(16),
+    margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+    padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Colors.white.withOpacity(0.06),
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.black12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black12,
-          blurRadius: 6,
-          spreadRadius: 1,
-        ),
-      ],
+      border: Border.all(color: Colors.white.withOpacity(0.16)),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "What are you Looking For?",
-          style: TextStyle(
-            color: Colors.indigo.shade900,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 16),
+        // Title provided by SectionTitle wrapper above
+        const SizedBox(height: 4),
         GridView.count(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: Responsive.isLargeScreen(context) ? 4 : 2,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
@@ -612,27 +659,29 @@ Widget _buildQuickLinks(BuildContext context) {
   );
 }
 
-/// ✅ **Quick Link Button with Hover & Click Effects**
+/// Quick Link Button
 Widget _quickLinkButton(String title, IconData icon, VoidCallback onTap) {
   return InkWell(
     onTap: onTap,
+    borderRadius: BorderRadius.circular(12),
     child: Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.blue.shade100),
+        color: Colors.white.withOpacity(0.10),
+        border: Border.all(color: Colors.white.withOpacity(0.16)),
         borderRadius: BorderRadius.circular(12),
       ),
-      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: Colors.deepOrange),
+          Icon(icon, color: _Brand.accent),
+          const SizedBox(height: 4),
           Text(
             title,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
               fontSize: 14,
+              color: Colors.white,
             ),
           ),
         ],
@@ -641,52 +690,82 @@ Widget _quickLinkButton(String title, IconData icon, VoidCallback onTap) {
   );
 }
 
-/// ✅ **Sponsor Banner**
-Widget _buildSponsorBanner() {
-  final List<String> sponsorLogos = [
-    "assets/sponsors/ipl.jpg",
-    "assets/sponsors/tata.jpeg",
-    "assets/sponsors/ipl.jpg",
-    "assets/sponsors/tata.jpeg",
-  ];
-  return Container(
-    padding: EdgeInsets.symmetric(vertical: 10),
-    color: Colors.blueGrey.shade900,
-    child: Column(
-      children: [
-        Text(
-          "Official Sponsors",
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        SizedBox(height: 10),
-        SizedBox(
-          height: 50,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: sponsorLogos.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Image.asset(sponsorLogos[index], height: 40),
-              );
-            },
+// ====== helpers: glass and titles ======
+class GlassSection extends StatelessWidget {
+  final EdgeInsetsGeometry padding;
+  final Widget child;
+  final double radius;
+  const GlassSection({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(16),
+    this.radius = 20,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(radius),
+            color: Colors.white.withOpacity(0.08),
+            border: Border.all(color: Colors.white.withOpacity(0.16)),
           ),
+          padding: padding,
+          child: child,
         ),
-      ],
-    ),
-  );
+      ),
+    );
+  }
 }
 
-/// 🏏 **Helper Widgets**
-Widget _iconButton(IconData icon, String label) {
-  return Column(
-    children: [
-      Icon(icon, color: Colors.white, size: 25),
-      SizedBox(height: 5),
-      Text(label, style: TextStyle(color: Colors.white, fontSize: 12)),
-    ],
-  );
+class SectionTitle extends StatelessWidget {
+  final String title;
+  final EdgeInsetsGeometry margin;
+  const SectionTitle(this.title,
+      {super.key, this.margin = const EdgeInsets.only(bottom: 8)});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: margin,
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w800,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
 }
 
-/// Custom button widget for navigation
+class _FbLink extends StatelessWidget {
+  const _FbLink({required this.label, required this.url});
+  final String label;
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        text: label,
+        style: const TextStyle(
+          color: Colors.lightBlueAccent,
+          decoration: TextDecoration.underline,
+        ),
+        recognizer: TapGestureRecognizer()
+          ..onTap = () async {
+            final uri = Uri.parse(url);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            }
+          },
+      ),
+    );
+  }
+}
