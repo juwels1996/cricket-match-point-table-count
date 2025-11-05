@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../core/api-service/api_services.dart';
 import '../../../core/model/sponsor_model.dart';
 
@@ -11,7 +10,7 @@ class SponsorScreen extends StatefulWidget {
 }
 
 class _SponsorScreenState extends State<SponsorScreen> {
-  late Future<Map<String, List<Sponsor>>> _futureSponsors;
+  late Future<List<Sponsor>> _futureSponsors;
   final ApiService apiService = ApiService();
 
   @override
@@ -22,7 +21,7 @@ class _SponsorScreenState extends State<SponsorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, List<Sponsor>>>(
+    return FutureBuilder<List<Sponsor>>(
       future: _futureSponsors,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -37,10 +36,7 @@ class _SponsorScreenState extends State<SponsorScreen> {
                   style: TextStyle(color: Colors.white70)));
         }
 
-        final sponsorsByCategory = snapshot.data!;
-        // Combine all sponsors from every category
-        final allSponsors =
-            sponsorsByCategory.values.expand((list) => list).toList();
+        final sponsors = snapshot.data!;
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(12),
@@ -66,31 +62,38 @@ class _SponsorScreenState extends State<SponsorScreen> {
                 alignment: WrapAlignment.center,
                 spacing: 12,
                 runSpacing: 12,
-                children: allSponsors.map((s) {
-                  final imageUrl = s.image.startsWith('http')
-                      ? s.image
-                      : 'http://192.168.68.101:8000${s.image}';
-
+                children: sponsors.map((s) {
+                  // Handle multiple images for each sponsor
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          imageUrl,
-                          height: 80,
-                          width: 120,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                            height: 80,
-                            width: 120,
-                            color: Colors.grey[800],
-                            alignment: Alignment.center,
-                            child: const Icon(Icons.broken_image,
-                                color: Colors.white54),
-                          ),
-                        ),
+                      // Create a row of images for each sponsor
+                      Wrap(
+                        spacing: 8, // Space between images
+                        children: s.images.map((imageUrl) {
+                          final imageSrc = imageUrl.startsWith('http')
+                              ? imageUrl
+                              : 'http://192.168.0.139:8000$imageUrl';
+
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              imageSrc,
+                              height: 80,
+                              width: 120,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                height: 80,
+                                width: 120,
+                                color: Colors.grey[800],
+                                alignment: Alignment.center,
+                                child: const Icon(Icons.broken_image,
+                                    color: Colors.white54),
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       ),
                       const SizedBox(height: 6),
                       Text(

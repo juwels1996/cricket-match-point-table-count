@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../model/event_model.dart';
 
 class EventService {
-  final String apiUrl = 'http://192.168.68.101:8000/api/events/';
+  final String apiUrl = 'http://192.168.0.139:8000/api/events/';
 
   Future<List<Event>> fetchEventData() async {
     try {

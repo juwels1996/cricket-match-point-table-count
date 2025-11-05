@@ -1,24 +1,43 @@
+import 'dart:convert';
+
+List<Sponsor> sponsorFromJson(String str) =>
+    List<Sponsor>.from(json.decode(str).map((x) => Sponsor.fromJson(x)));
+
+String sponsorToJson(List<Sponsor> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
 class Sponsor {
-  final String name;
-  final String image; // full or relative
-  final String category; // "media" | "co" | "main"
-  Sponsor({required this.name, required this.image, required this.category});
+  int id;
+  String name;
+  List<String> images;
+  String category;
+  String categoryLabel;
+  int position;
 
-  factory Sponsor.fromJson(Map<String, dynamic> j) => Sponsor(
-        name: j['name'] ?? '',
-        image: j['image'] ?? '',
-        category: j['category'] ?? '',
-      );
-}
-
-// Call this after fetching the JSON from your /sponsors endpoint
-Map<String, List<Sponsor>> parseSponsorsByCategory(Map<String, dynamic> json) {
-  final Map<String, List<Sponsor>> out = {};
-  json.forEach((categoryLabel, list) {
-    final items = (list as List)
-        .map((e) => Sponsor.fromJson(e as Map<String, dynamic>))
-        .toList();
-    out[categoryLabel] = items; // <-- keep ALL items, not just first
+  Sponsor({
+    required this.id,
+    required this.name,
+    required this.images,
+    required this.category,
+    required this.categoryLabel,
+    required this.position,
   });
-  return out;
+
+  factory Sponsor.fromJson(Map<String, dynamic> json) => Sponsor(
+        id: json["id"],
+        name: json["name"],
+        images: List<String>.from(json["images"].map((x) => x)),
+        category: json["category"],
+        categoryLabel: json["category_label"],
+        position: json["position"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "images": List<dynamic>.from(images.map((x) => x)),
+        "category": category,
+        "category_label": categoryLabel,
+        "position": position,
+      };
 }

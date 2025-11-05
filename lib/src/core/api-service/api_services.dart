@@ -26,23 +26,28 @@ class ApiService {
     }
   }
 
-  Future<Map<String, List<Sponsor>>> fetchSponsors() async {
-    final response =
-        await http.get(Uri.parse('https://backend.dplt10.org/api/sponsor/'));
+  Future<List<Sponsor>> fetchSponsors() async {
+    try {
+      final response =
+          await http.get(Uri.parse('http://192.168.0.139:8000/api/sponsor/'));
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
-      final Map<String, List<Sponsor>> groupedSponsors = {};
+      // Check if the response is successful
+      if (response.statusCode == 200) {
+        // Decode the JSON response body into a list
+        final List<dynamic> data = jsonDecode(response.body);
 
-      data.forEach((category, sponsorsJson) {
-        final sponsorsList = (sponsorsJson as List)
-            .map((item) => Sponsor.fromJson(item))
-            .toList();
-        groupedSponsors[category] = sponsorsList;
-      });
+        // Convert the list into a list of Sponsor objects
+        final List<Sponsor> sponsors =
+            data.map((item) => Sponsor.fromJson(item)).toList();
 
-      return groupedSponsors;
-    } else {
+        return sponsors;
+      } else {
+        throw Exception(
+            'Failed to load sponsors, status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle errors (e.g., network issues)
+      print('Error fetching sponsors: $error');
       throw Exception('Failed to load sponsors');
     }
   }
