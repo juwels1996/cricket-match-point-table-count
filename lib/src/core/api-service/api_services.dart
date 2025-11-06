@@ -4,7 +4,7 @@ import '../model/photo_gallery.dart';
 import '../model/sponsor_model.dart';
 
 class ApiService {
-  final String apiUrl = 'http://192.168.68.101:8000/api/matchgallery/';
+  final String apiUrl = 'https://backend.dplt10.org/api/matchgallery/';
 
   // Fetch match gallery data
   Future<List<MatchGallery>> fetchMatchGallery() async {
@@ -29,7 +29,7 @@ class ApiService {
   Future<List<Sponsor>> fetchSponsors() async {
     try {
       final response =
-          await http.get(Uri.parse('http://192.168.0.139:8000/api/sponsor/'));
+          await http.get(Uri.parse('https://backend.dplt10.org/api/sponsor/'));
 
       // Check if the response is successful
       if (response.statusCode == 200) {

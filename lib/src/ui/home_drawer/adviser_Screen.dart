@@ -1,19 +1,20 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
+import '../../core/model/adviser_model.dart';
 import '../../utils/responsives_classes.dart';
 
 class AdviserScreen extends StatefulWidget {
-  AdviserScreen({Key? key}) : super(key: key);
+  const AdviserScreen({Key? key}) : super(key: key);
 
   @override
   State<AdviserScreen> createState() => _AdviserScreenState();
 }
 
 class _AdviserScreenState extends State<AdviserScreen> {
-  Map<String, dynamic> advisersByCategory = {}; // <-- store grouped data
+  Map<String, List<Adviser>> advisersByCategory = {};
 
   @override
   void initState() {
@@ -24,11 +25,20 @@ class _AdviserScreenState extends State<AdviserScreen> {
   Future<void> fetchAdvisers() async {
     try {
       final response =
-          await http.get(Uri.parse("http://192.168.68.101:8000/api/advisers/"));
+          await http.get(Uri.parse("https://backend.dplt10.org/api/advisers/"));
 
       if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+
+        // Group advisers by designation
+        final Map<String, List<Adviser>> grouped = {};
+        for (var item in data) {
+          final adviser = Adviser.fromJson(item);
+          grouped.putIfAbsent(adviser.designation, () => []).add(adviser);
+        }
+
         setState(() {
-          advisersByCategory = jsonDecode(response.body);
+          advisersByCategory = grouped;
         });
       } else {
         throw Exception("Failed to load advisers");
@@ -51,7 +61,7 @@ class _AdviserScreenState extends State<AdviserScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text("Advisers", style: TextStyle(color: Colors.white)),
+        title: const Text("Advisers", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -75,14 +85,12 @@ class _AdviserScreenState extends State<AdviserScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: categories.map((category) {
-                final advisers = advisersByCategory[category] as List<dynamic>;
+                final advisers = advisersByCategory[category]!;
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: 30,
-                    ),
+                    const SizedBox(height: 30),
                     // 🏷️ Category Title
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0),
@@ -98,9 +106,7 @@ class _AdviserScreenState extends State<AdviserScreen> {
                         ),
                       ),
                     ),
-                    Divider(
-                      color: Colors.grey,
-                    ),
+                    const Divider(color: Colors.grey),
 
                     // 👇 Adviser Grid
                     GridView.builder(
@@ -111,12 +117,12 @@ class _AdviserScreenState extends State<AdviserScreen> {
                         crossAxisCount: _getColumns(context),
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 0.7, // 👈 Balanced card proportion
+                        childAspectRatio: 0.7,
                       ),
                       itemCount: advisers.length,
                       itemBuilder: (context, index) {
                         final adviser = advisers[index];
-                        return _buildGlassCard(context, adviser);
+                        return _buildGlassCard(adviser);
                       },
                     ),
                   ],
@@ -129,8 +135,8 @@ class _AdviserScreenState extends State<AdviserScreen> {
     );
   }
 
-  /// 🪞 Nice smooth glass card
-  Widget _buildGlassCard(BuildContext context, dynamic adviser) {
+  /// 🪞 Glass card for each adviser
+  Widget _buildGlassCard(Adviser adviser) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: BackdropFilter(
@@ -163,7 +169,7 @@ class _AdviserScreenState extends State<AdviserScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(15),
                 child: Image.network(
-                  adviser['image_url'] ?? '',
+                  adviser.imageUrl,
                   fit: BoxFit.cover,
                   height: 130.h,
                   width: 120.w,
@@ -176,7 +182,7 @@ class _AdviserScreenState extends State<AdviserScreen> {
               ),
               const SizedBox(height: 6),
               Text(
-                adviser['name'] ?? '',
+                adviser.name,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontFamily: 'Roboto',
@@ -187,7 +193,7 @@ class _AdviserScreenState extends State<AdviserScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                adviser['designation'] ?? '',
+                adviser.designation,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Roboto',
@@ -202,7 +208,7 @@ class _AdviserScreenState extends State<AdviserScreen> {
     );
   }
 
-// 📱 Responsive column count
+  // 📱 Responsive grid layout
   int _getColumns(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     if (width > 1200) return 5;
