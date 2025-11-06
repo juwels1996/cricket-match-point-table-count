@@ -284,14 +284,14 @@ class _AlbumCardState extends State<_AlbumCard> {
             child: Stack(
               children: [
                 // cover image
-                // Positioned.fill(
-                //   child: Hero(
-                //     tag: widget.heroTag,
-                //     child: widget.imageUrl.isNotEmpty
-                //         ? Image.network(widget.imageUrl, fit: BoxFit.cover)
-                //         : Container(color: Colors.white10),
-                //   ),
-                // ),
+                Positioned.fill(
+                  child: Hero(
+                    tag: widget.heroTag,
+                    child: widget.imageUrl.isNotEmpty
+                        ? Image.network(widget.imageUrl, fit: BoxFit.cover)
+                        : Container(color: Colors.white10),
+                  ),
+                ),
                 // glossy gradient overlay bottom
                 Positioned.fill(
                   child: DecoratedBox(
