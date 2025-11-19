@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cricket_scorecard/src/ui/over-stat/overall_stats_screen.dart';
 
-class TopPerformerBanner extends StatefulWidget {
-  const TopPerformerBanner({super.key, this.title = 'Most Run'});
+class HighestScroreWidget extends StatefulWidget {
+  const HighestScroreWidget({super.key, this.title = 'Highest Score'});
   final String title;
 
   @override
-  State<TopPerformerBanner> createState() => _TopPerformerBannerState();
+  State<HighestScroreWidget> createState() => _HighestScroreWidgetState();
 }
 
-class _TopPerformerBannerState extends State<TopPerformerBanner> {
+class _HighestScroreWidgetState extends State<HighestScroreWidget> {
   late PageController _pc;
   double _vf = 0.78;
 
@@ -206,6 +206,7 @@ class _PerformerSlide extends StatelessWidget {
     final team = (data['team_name'] ?? '').toString();
     final matches = (data['matches'] ?? 0).toString();
     final hs = (data['runs'] ?? '0').toString();
+    final highestScroe = (data['highest_score'] ?? '0').toString();
     final avg = (data['average'] ?? 0).toString();
     final fours = (data['fours'] ?? 0).toString();
     final sixes = (data['sixes'] ?? 0).toString();
@@ -243,7 +244,7 @@ class _PerformerSlide extends StatelessWidget {
                     color: Colors.white.withOpacity(0.06),
                     border: Border.all(color: Colors.white.withOpacity(0.22)),
                   ),
-                  child: const Text('Most Runs',
+                  child: const Text('Highest Runs',
                       style: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.w700)),
                 ),
@@ -264,7 +265,7 @@ class _PerformerSlide extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: '$hsNum',
+                        text: '$highestScroe',
                         style: const TextStyle(
                           color: Color(0xFFE85A32),
                           fontWeight: FontWeight.w900,

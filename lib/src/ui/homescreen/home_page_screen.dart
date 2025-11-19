@@ -17,6 +17,7 @@ import '../../utils/responsives_classes.dart';
 import '../event/event_screen.dart';
 import '../gallery_screen/gallery_screen.dart';
 import '../home_drawer/home_drawer_screen.dart';
+import '../over-stat/highest_scrore_widget.dart';
 import '../over-stat/overall_stats_screen.dart';
 import '../over-stat/top_performer_preview.dart';
 import '../point_table/point_table_preview.dart';
@@ -231,6 +232,7 @@ class _HomePageState extends State<HomePage>
                         const SizedBox(height: 18),
                         TopPerformerBanner(),
                         const SizedBox(height: 18),
+                        HighestScroreWidget(),
 
                         // Event Going On + Carousel
                         GlassSection(

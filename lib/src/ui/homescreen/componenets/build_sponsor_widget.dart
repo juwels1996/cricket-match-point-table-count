@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/api-service/api_services.dart';
 import '../../../core/model/sponsor_model.dart';
 
@@ -79,8 +80,8 @@ class _SponsorScreenState extends State<SponsorScreen> {
                             borderRadius: BorderRadius.circular(8),
                             child: Image.network(
                               imageSrc,
-                              height: 80,
-                              width: 120,
+                              // height: 80,
+                              width: 100.w,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
                                   Container(
